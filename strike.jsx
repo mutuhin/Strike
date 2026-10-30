@@ -1099,6 +1099,10 @@ const PAGES = { dashboard: Dashboard, schedule: Schedule, bookings: Bookings, ea
 // Change this. It ships inside the page code, so it only keeps casual visitors out of the admin screens.
 const ADMIN_PASSWORD = "strike2026";
 
+// Admin panel is parked: available only on `npm run dev` (your machine), never on the live site.
+// Set to true to bring the Admin Login button back everywhere.
+const ADMIN_ENABLED = import.meta.env.DEV;
+
 function readSavedData(key, fallback) {
   try {
     const saved = localStorage.getItem(key);
@@ -1113,7 +1117,7 @@ export default function App() {
   const [page, setPage] = useState("dashboard");
   const [scheduleRecords, setScheduleRecords] = useState(() => readSavedData("strikeSchedule", INITIAL_SCHEDULE));
   const [bookings, setBookings] = useState(() => readSavedData("strikeBookings", initialBookingsFromSchedule(INITIAL_SCHEDULE)));
-  const [isAdmin, setIsAdmin] = useState(() => { try { return sessionStorage.getItem("strikeAdmin") === "yes"; } catch { return false; } });
+  const [isAdmin, setIsAdmin] = useState(() => { if (!ADMIN_ENABLED) return false; try { return sessionStorage.getItem("strikeAdmin") === "yes"; } catch { return false; } });
   const [loginOpen, setLoginOpen] = useState(false);
   const [loginPassword, setLoginPassword] = useState("");
   const [loginError, setLoginError] = useState("");
@@ -1268,7 +1272,7 @@ export default function App() {
                 <div style={{ width:38, height:38, background:C.cream, borderRadius:8, display:"flex", alignItems:"center", justifyContent:"center", fontFamily:FH, fontSize:14, color:C.bgDeep, letterSpacing:1 }}>SA</div>
                 <button onClick={logout} style={{ fontFamily:FH, fontSize:11, letterSpacing:1, textTransform:"uppercase", padding:"6px 12px", whiteSpace:"nowrap", borderRadius:7, cursor:"pointer", background:"transparent", color:C.muted, border:`1px solid ${C.borderMid}` }}>Log out</button>
               </>
-            ) : (
+            ) : ADMIN_ENABLED && (
               <button onClick={() => { setLoginPassword(""); setLoginError(""); setLoginOpen(true); }} style={{ fontFamily:FH, fontSize:11, letterSpacing:1, textTransform:"uppercase", padding:"6px 12px", whiteSpace:"nowrap", borderRadius:7, cursor:"pointer", background:"transparent", color:C.muted, border:`1px solid ${C.borderMid}` }}>Admin Login</button>
             )}
           </div>
