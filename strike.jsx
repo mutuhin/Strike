@@ -183,8 +183,11 @@ function dateLabel(dateKey) {
   return `${date.toLocaleDateString("en-US", { month:"short" })} ${date.getDate()}`;
 }
 
-// Demo "today": matches the calendar's highlighted Nov 10. Switch to new Date() when going live.
-const APP_NOW = new Date(2026, 10, 10, 12, 0);
+// Customers can book from today up to this many days ahead
+const BOOKING_WINDOW_DAYS = 90;
+const pad2 = (n) => String(n).padStart(2, "0");
+const toDateKey = (d) => `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+const addDays = (d, n) => { const next = new Date(d); next.setDate(next.getDate() + n); return next; };
 
 const normPhone = (phone = "") => phone.replace(/\D/g, "").replace(/^88/, "");
 
@@ -304,8 +307,15 @@ function printReceipt(receipt) {
 // Visitors only see open slots and can select several (across days) to book at once;
 // the admin sees every slot.
 function Dashboard({ scheduleRecords, onScheduleChange, isAdmin }) {
-  const [selectedDay, setSelectedDay] = useState(10);
-  const [cart,        setCart]        = useState([]); // [{ day, slotId }]
+  // Bookable window: today → today + BOOKING_WINDOW_DAYS. Dates outside it are not shown.
+  const now      = new Date();
+  const todayKey = toDateKey(now);
+  const lastKey  = toDateKey(addDays(now, BOOKING_WINDOW_DAYS));
+  const inWindow = (key) => key >= todayKey && key <= lastKey;
+
+  const [selectedDay, setSelectedDay] = useState(todayKey);       // date key "YYYY-MM-DD"
+  const [viewMonth,   setViewMonth]   = useState(todayKey.slice(0, 7)); // "YYYY-MM"
+  const [cart,        setCart]        = useState([]); // [{ day: date key, slotId }]
   const [receipt,     setReceipt]     = useState(null);
   const [printBlocked, setPrintBlocked] = useState(false);
   const [bookModal,   setBookModal]   = useState(null);
@@ -313,14 +323,21 @@ function Dashboard({ scheduleRecords, onScheduleChange, isAdmin }) {
   const [bookingNotice, setBookingNotice] = useState("");
   const [bookingError,  setBookingError]  = useState("");
 
-  const dateKeyFor    = (day) => `2026-11-${String(day).padStart(2, "0")}`;
-  const fullDateLabel = (day) => `${new Date(2026, 10, day).toLocaleDateString("en-US", { weekday:"long" })}, Nov ${day}`;
-  const getStatus     = (day, sid) => scheduleRecords[`${dateKeyFor(day)}-${sid}`]?.status || "Available";
-  const openSlotsFor  = (day) => SCHEDULE_TIMES.filter(ts => getStatus(day, ts.id) === "Available");
+  const fullDateLabel = (day) => new Date(`${day}T12:00:00`).toLocaleDateString("en-US", { weekday:"long", month:"short", day:"numeric" });
+  const getStatus     = (day, sid) => scheduleRecords[`${day}-${sid}`]?.status || "Available";
+  // Free slots that haven't started yet (so today's earlier slots can't be booked)
+  const openSlotsFor  = (day) => !inWindow(day) ? [] : SCHEDULE_TIMES.filter(ts => getStatus(day, ts.id) === "Available" && slotStartTime(day, ts) > now);
+
+  // Month shown in the calendar, limited to the months the booking window touches
+  const firstMonth = todayKey.slice(0, 7), lastMonth = lastKey.slice(0, 7);
+  const [viewYear, viewMon] = viewMonth.split("-").map(Number);
+  const monthLabel = new Date(viewYear, viewMon - 1, 1).toLocaleDateString("en-US", { month:"long", year:"numeric" });
+  const shiftMonth = (n) => setViewMonth(toDateKey(new Date(viewYear, viewMon - 1 + n, 1)).slice(0, 7));
 
   // Calendar grid — Monday first
-  const offset = (new Date(2026, 10, 1).getDay() + 6) % 7;
-  const allCells = Array(offset).fill(null).concat(Array.from({ length: 30 }, (_, i) => i + 1));
+  const daysInMonth = new Date(viewYear, viewMon, 0).getDate();
+  const offset = (new Date(viewYear, viewMon - 1, 1).getDay() + 6) % 7;
+  const allCells = Array(offset).fill(null).concat(Array.from({ length: daysInMonth }, (_, i) => `${viewMonth}-${pad2(i + 1)}`));
   const rem = allCells.length % 7;
   const cells = rem === 0 ? allCells : allCells.concat(Array(7 - rem).fill(null));
   const weeks = Array.from({ length: cells.length / 7 }, (_, i) => cells.slice(i * 7, i * 7 + 7));
@@ -331,7 +348,7 @@ function Dashboard({ scheduleRecords, onScheduleChange, isAdmin }) {
   const selFull = fullDateLabel(selectedDay);
   const allSelSlots = SCHEDULE_TIMES.map(ts => ({
     ...ts,
-    ...(scheduleRecords[`${dateKeyFor(selectedDay)}-${ts.id}`] || {}),
+    ...(scheduleRecords[`${selectedDay}-${ts.id}`] || {}),
     status: getStatus(selectedDay, ts.id) === "Available" ? "available" : "booked",
   }));
   const selSlots    = isAdmin ? allSelSlots : allSelSlots.filter(s => s.status === "available");
@@ -343,7 +360,7 @@ function Dashboard({ scheduleRecords, onScheduleChange, isAdmin }) {
   // Selected slots, kept while the visitor moves between dates
   const inCart     = (day, sid) => cart.some(c => c.day === day && c.slotId === sid);
   const toggleCart = (day, sid) => setCart(cur => cur.some(c => c.day === day && c.slotId === sid) ? cur.filter(c => !(c.day === day && c.slotId === sid)) : [...cur, { day, slotId:sid }]);
-  const cartItems   = cart.map(c => ({ ...c, slot:SCHEDULE_TIMES[c.slotId] })).sort((a, b) => a.day - b.day || a.slotId - b.slotId);
+  const cartItems   = cart.map(c => ({ ...c, slot:SCHEDULE_TIMES[c.slotId] })).sort((a, b) => a.day.localeCompare(b.day) || a.slotId - b.slotId);
   const cartTotal   = cartItems.reduce((sum, c) => sum + c.slot.price, 0);
   const cartAdvance = cartItems.length * 500;
 
@@ -368,14 +385,15 @@ function Dashboard({ scheduleRecords, onScheduleChange, isAdmin }) {
     const name = bookingForm.name.trim(), phone = bookingForm.phone.trim();
     if (cartItems.length === 0) { setBookingError("Please select at least one slot."); return; }
     if (!name || !phone) { setBookingError("Please enter your name and phone number."); return; }
-    const taken = cartItems.filter(c => getStatus(c.day, c.slotId) !== "Available");
+    const stillOpen = c => openSlotsFor(c.day).some(s => s.id === c.slotId);
+    const taken = cartItems.filter(c => !stillOpen(c));
     if (taken.length) {
-      setCart(cur => cur.filter(c => getStatus(c.day, c.slotId) === "Available"));
-      setBookingError(`${taken.length} of your slots ${taken.length === 1 ? "was" : "were"} just taken and removed. Please check the list and confirm again.`);
+      setCart(cur => cur.filter(stillOpen));
+      setBookingError(`${taken.length} of your slots ${taken.length === 1 ? "is" : "are"} no longer available (just taken or already started) and ${taken.length === 1 ? "was" : "were"} removed. Please check the list and confirm again.`);
       return;
     }
     const receiptId = `STR-${Date.now().toString(36).toUpperCase()}`;
-    cartItems.forEach(c => onScheduleChange(dateKeyFor(c.day), c.slotId, { status:"Booked", customer:name, phone, advance:500, paid:500, due:c.slot.price - 500, payType:bookingForm.payment, emp:"Online", receiptId }));
+    cartItems.forEach(c => onScheduleChange(c.day, c.slotId, { status:"Booked", customer:name, phone, advance:500, paid:500, due:c.slot.price - 500, payType:bookingForm.payment, emp:"Online", receiptId }));
     setReceipt({
       id: receiptId, issued: new Date(), name, phone, payment: bookingForm.payment,
       items: cartItems.map(c => ({ date: fullDateLabel(c.day), time: c.slot.label, period: c.slot.period, price: c.slot.price })),
@@ -391,7 +409,7 @@ function Dashboard({ scheduleRecords, onScheduleChange, isAdmin }) {
     if (!name || !phone) { setBookingError("Please enter your name and phone number."); return; }
     if (getStatus(bookModal.day, modalSlot.id) !== "Available") { setBookingError("This slot was just taken. Please choose another time."); return; }
     const due = modalSlot.price - 500;
-    onScheduleChange(dateKeyFor(bookModal.day), modalSlot.id, { status:"Booked", customer:name, phone, advance:500, paid:500, due, payType:bookingForm.payment, emp: isAdmin ? bookingForm.emp : "Online" });
+    onScheduleChange(bookModal.day, modalSlot.id, { status:"Booked", customer:name, phone, advance:500, paid:500, due, payType:bookingForm.payment, emp: isAdmin ? bookingForm.emp : "Online" });
     setBookingNotice(`Booking confirmed for ${name} · ${modalSlot.label}, ${fullDateLabel(bookModal.day)}. Advance ৳500 via ${bookingForm.payment} · ৳${due.toLocaleString()} due at the ground.`);
   };
 
@@ -421,7 +439,14 @@ function Dashboard({ scheduleRecords, onScheduleChange, isAdmin }) {
         <div style={{ background:"linear-gradient(160deg, rgba(122,32,32,0.92), rgba(80,16,16,0.94))", border:"1px solid rgba(255,180,170,0.08)", borderRadius:14, padding:"14px 18px", position:"relative", overflow:"hidden", boxShadow:"0 24px 60px rgba(20,0,0,0.45), inset 0 1px 0 rgba(255,220,210,0.07)" }}>
           <img src={strikeLogo} alt="" aria-hidden="true" style={{ position:"absolute", top:"50%", left:"50%", width:"85%", transform:"translate(-50%, -50%)", opacity:0.035, mixBlendMode:"screen", pointerEvents:"none", zIndex:0 }} />
           <div style={{ position:"relative", zIndex:1 }}>
-          <div style={{ fontFamily:FH, fontSize:17, color:"#FFFFFF", letterSpacing:1, marginBottom:10, textTransform:"uppercase" }}>November 2026</div>
+          <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", gap:10, marginBottom:10 }}>
+            <div style={{ fontFamily:FH, fontSize:17, color:"#FFFFFF", letterSpacing:1, textTransform:"uppercase" }}>{monthLabel}</div>
+            <div style={{ display:"flex", gap:8 }}>
+              {[[-1, "‹ Previous", viewMonth > firstMonth], [1, "Next month ›", viewMonth < lastMonth]].map(([n, label, enabled]) => (
+                <button key={n} type="button" disabled={!enabled} onClick={() => shiftMonth(n)} className="month-btn" style={{ fontFamily:FH, fontSize:11, letterSpacing:1, textTransform:"uppercase", padding:"6px 12px", borderRadius:7, whiteSpace:"nowrap", cursor: enabled ? "pointer" : "default", opacity: enabled ? 1 : 0.35, background: n > 0 && enabled ? `linear-gradient(180deg, ${C.surfaceHigh}, #5E1414)` : "transparent", color: enabled ? "#FFFFFF" : C.faint, border:`1px solid ${enabled ? "rgba(255,150,150,0.3)" : C.border}`, boxShadow: n > 0 && enabled ? "0 4px 14px rgba(255,60,60,0.2)" : "none" }}>{label}</button>
+              ))}
+            </div>
+          </div>
 
           {/* Day names */}
           <div style={{ display:"grid", gridTemplateColumns:"repeat(7,1fr)", gap:"clamp(4px, 1vw, 10px)", marginBottom:8 }}>
@@ -436,10 +461,11 @@ function Dashboard({ scheduleRecords, onScheduleChange, isAdmin }) {
           {weeks.map((wk, wi) => (
             <div key={wi} style={{ display:"grid", gridTemplateColumns:"repeat(7,1fr)", gap:"clamp(4px, 1vw, 10px)", marginBottom:"clamp(4px, 0.9vh, 8px)" }}>
               {wk.map((day, di) => {
-                if (!day) return <div key={di} />;
+                if (!day || !inWindow(day)) return <div key={di} />;
                 const isSel    = day === selectedDay;
-                const isToday  = day === 10;
+                const isToday  = day === todayKey;
                 const booked   = dayBooked(day);
+                const hasOpen  = openSlotsFor(day).length > 0;
                 const picked   = cart.filter(c => c.day === day).length;
                 return (
                   <div key={di} className={`cal-day${isSel ? " is-sel" : ""}`} onClick={() => { setSelectedDay(day); if (!isAdmin) openSlotPicker(day); }} style={{
@@ -450,10 +476,10 @@ function Dashboard({ scheduleRecords, onScheduleChange, isAdmin }) {
                       line={isSel ? "rgba(160,20,30,0.6)" : isToday ? "rgba(237,216,200,0.55)" : "rgba(255,110,110,0.45)"}
                     />
                     {picked > 0 && <div style={{ position:"absolute", top:-6, right:-6, minWidth:20, height:20, padding:"0 5px", borderRadius:10, background:C.green, color:C.bgDeep, fontFamily:F, fontSize:11, fontWeight:700, display:"flex", alignItems:"center", justifyContent:"center", boxShadow:"0 2px 6px rgba(0,0,0,0.35)" }}>{picked}</div>}
-                    <div style={{ fontFamily:FH, fontSize:"clamp(21px, min(2.8vw, 4vh), 34px)", color: isSel ? C.bgDeep : "#FFFFFF", lineHeight:1 }}>{day}</div>
+                    <div style={{ fontFamily:FH, fontSize:"clamp(21px, min(2.8vw, 4vh), 34px)", color: isSel ? C.bgDeep : "#FFFFFF", lineHeight:1 }}>{Number(day.slice(8))}</div>
                     <div style={{ marginTop:6, display:"flex", justifyContent:"center", gap:4, minHeight:7 }}>
                       {isAdmin && booked > 0 && <div style={{ width:7, height:7, borderRadius:"50%", background:C.red, opacity:0.75 }} />}
-                      {booked < 16 && <div style={{ width:7, height:7, borderRadius:"50%", background:C.green, opacity:0.75 }} />}
+                      {hasOpen && <div style={{ width:7, height:7, borderRadius:"50%", background:C.green, opacity:0.75 }} />}
                     </div>
                   </div>
                 );
@@ -722,7 +748,7 @@ function MyBookings({ scheduleRecords, onNavigate }) {
       const [date, slotId] = recordKey.split(/-(?=\d+$)/);
       const slot = SCHEDULE_TIMES[Number(slotId)];
       const start = slotStartTime(date, slot);
-      const played = start.getTime() + 90 * 60000 <= APP_NOW.getTime();
+      const played = start.getTime() + 90 * 60000 <= Date.now();
       const paid = Number(record.paid ?? record.advance ?? 0);
       const due = record.closed ? 0 : Number(record.due ?? Math.max(0, slot.price - paid));
       return { recordKey, date, slot, start, played, status:record.status, paid, due, receiptId:record.receiptId };
