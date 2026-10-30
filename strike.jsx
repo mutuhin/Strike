@@ -10,14 +10,14 @@ const C = {
   bg:          "#5C1010",
   surface:     "#6E1818",
   surfaceHigh: "#7D2222",
-  border:      "rgba(255,200,190,0.14)",
-  borderMid:   "rgba(255,200,190,0.28)",
+  border:      "rgba(255,200,190,0.22)",
+  borderMid:   "rgba(255,200,190,0.38)",
   text:        "#FAF0EE",
-  muted:       "#C4A0A0",
-  faint:       "#9A7070",
+  muted:       "#EAD8D4",   // 9.9:1 on page, 7.4:1 on lightest card
+  faint:       "#D9BEB9",   // 7.8:1 on page, 5.9:1 on lightest card
   cream:       "#EDD8C8",
   green:       "#5BE89A",
-  red:         "#FF8080",
+  red:         "#FFA3A3",
   gold:        "#FFDDAA",
 };
 
@@ -34,7 +34,7 @@ function Sel({ children, ...r }) { return <select {...r} style={{ ...inp, cursor
 function Field({ label, children }) {
   return (
     <div style={{ marginBottom: 16 }}>
-      <div style={{ fontFamily:F, fontSize:10, fontWeight:700, color:C.faint, letterSpacing:2, marginBottom:7, textTransform:"uppercase" }}>{label}</div>
+      <div style={{ fontFamily:F, fontSize:11, fontWeight:700, color:C.faint, letterSpacing:2, marginBottom:7, textTransform:"uppercase" }}>{label}</div>
       {children}
     </div>
   );
@@ -253,7 +253,7 @@ function Receipt({ receipt }) {
         <div style={row}><span>Total ({receipt.items.length} slot{receipt.items.length === 1 ? "" : "s"})</span><strong style={{ color:"#FFFFFF" }}>৳{receipt.total.toLocaleString()}</strong></div>
         <div style={row}><span>Advance paid</span><strong style={{ color:C.green }}>৳{receipt.advance.toLocaleString()}</strong></div>
         <div style={{ ...row, color:C.gold }}><span>Due at the ground</span><strong>৳{receipt.due.toLocaleString()}</strong></div>
-        <div style={{ fontFamily:F, fontSize:10, color:C.faint, marginTop:12, lineHeight:1.5 }}>Show this receipt at the ground. Keep your receipt number for any questions.</div>
+        <div style={{ fontFamily:F, fontSize:11, color:C.faint, marginTop:12, lineHeight:1.5 }}>Show this receipt at the ground. Keep your receipt number for any questions.</div>
       </div>
     </div>
   );
@@ -331,7 +331,8 @@ function Dashboard({ scheduleRecords, onScheduleChange, isAdmin }) {
   // Month shown in the calendar, limited to the months the booking window touches
   const firstMonth = todayKey.slice(0, 7), lastMonth = lastKey.slice(0, 7);
   const [viewYear, viewMon] = viewMonth.split("-").map(Number);
-  const monthLabel = new Date(viewYear, viewMon - 1, 1).toLocaleDateString("en-US", { month:"long", year:"numeric" });
+  const monthLabel      = new Date(viewYear, viewMon - 1, 1).toLocaleDateString("en-US", { month:"long", year:"numeric" });
+  const monthLabelShort = new Date(viewYear, viewMon - 1, 1).toLocaleDateString("en-US", { month:"short", year:"numeric" });
   const shiftMonth = (n) => setViewMonth(toDateKey(new Date(viewYear, viewMon - 1 + n, 1)).slice(0, 7));
 
   // Calendar grid — Monday first
@@ -424,7 +425,7 @@ function Dashboard({ scheduleRecords, onScheduleChange, isAdmin }) {
         <div className="price-cards" style={{ display:"flex", gap:10, flexWrap:"wrap" }}>
           {[["6–7:30 AM · 4:30–6 PM", "৳2,800", C.cream], ["7:30 AM – 4:30 PM", "৳2,500", C.cream], ["6 PM – 6 AM", "৳3,199", C.gold]].map(([lbl, price, col]) => (
             <div key={lbl} className="price-card" style={{ background:`linear-gradient(160deg, ${C.surfaceHigh}, #561212)`, border:"1px solid rgba(255,180,170,0.1)", borderRadius:10, padding:"8px 16px", textAlign:"right", boxShadow:"0 10px 26px rgba(20,0,0,0.35), inset 0 1px 0 rgba(255,220,210,0.08)" }}>
-              <div className="pc-label" style={{ fontFamily:F, fontSize:9, color:C.faint, letterSpacing:2, textTransform:"uppercase", marginBottom:5 }}>{lbl}</div>
+              <div className="pc-label" style={{ fontFamily:F, fontSize:11, color:C.faint, letterSpacing:2, textTransform:"uppercase", marginBottom:5 }}>{lbl}</div>
               <div className="pc-price" style={{ fontFamily:FH, fontSize:19, color:col, textShadow:"0 0 16px rgba(255,190,150,0.35)" }}>{price}</div>
             </div>
           ))}
@@ -436,13 +437,13 @@ function Dashboard({ scheduleRecords, onScheduleChange, isAdmin }) {
       <div className="dashboard-panels" style={{ display:"grid", gridTemplateColumns: isAdmin ? "minmax(0, 1.2fr) minmax(0, 1fr)" : "minmax(0, 1fr)", gap:18, alignItems:"start" }}>
 
         {/* Left: Calendar */}
-        <div style={{ background:"linear-gradient(160deg, rgba(122,32,32,0.92), rgba(80,16,16,0.94))", border:"1px solid rgba(255,180,170,0.08)", borderRadius:14, padding:"14px 18px", position:"relative", overflow:"hidden", boxShadow:"0 24px 60px rgba(20,0,0,0.45), inset 0 1px 0 rgba(255,220,210,0.07)" }}>
+        <div style={{ background:"linear-gradient(160deg, rgba(104,24,24,0.94), rgba(70,13,13,0.96))", border:"1px solid rgba(255,180,170,0.08)", borderRadius:14, padding:"14px 18px", position:"relative", overflow:"hidden", boxShadow:"0 24px 60px rgba(20,0,0,0.45), inset 0 1px 0 rgba(255,220,210,0.07)" }}>
           <img src={strikeLogo} alt="" aria-hidden="true" style={{ position:"absolute", top:"50%", left:"50%", width:"85%", transform:"translate(-50%, -50%)", opacity:0.035, mixBlendMode:"screen", pointerEvents:"none", zIndex:0 }} />
           <div style={{ position:"relative", zIndex:1 }}>
           <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", gap:10, marginBottom:10 }}>
-            <div style={{ fontFamily:FH, fontSize:17, color:"#FFFFFF", letterSpacing:1, textTransform:"uppercase" }}>{monthLabel}</div>
-            <div style={{ display:"flex", gap:8 }}>
-              {[[-1, "‹ Previous", viewMonth > firstMonth], [1, "Next month ›", viewMonth < lastMonth]].map(([n, label, enabled]) => (
+            <div className="month-title" style={{ fontFamily:FH, fontSize:17, color:"#FFFFFF", letterSpacing:1, textTransform:"uppercase", whiteSpace:"nowrap" }}><span className="lbl-long">{monthLabel}</span><span className="lbl-short">{monthLabelShort}</span></div>
+            <div style={{ display:"flex", gap:8, flexShrink:0 }}>
+              {[[-1, <>‹ <span className="lbl-long">Previous</span><span className="lbl-short">Prev</span></>, viewMonth > firstMonth], [1, "Next month ›", viewMonth < lastMonth]].map(([n, label, enabled]) => (
                 <button key={n} type="button" disabled={!enabled} onClick={() => shiftMonth(n)} className="month-btn" style={{ fontFamily:FH, fontSize:11, letterSpacing:1, textTransform:"uppercase", padding:"6px 12px", borderRadius:7, whiteSpace:"nowrap", cursor: enabled ? "pointer" : "default", opacity: enabled ? 1 : 0.35, background: n > 0 && enabled ? `linear-gradient(180deg, ${C.surfaceHigh}, #5E1414)` : "transparent", color: enabled ? "#FFFFFF" : C.faint, border:`1px solid ${enabled ? "rgba(255,150,150,0.3)" : C.border}`, boxShadow: n > 0 && enabled ? "0 4px 14px rgba(255,60,60,0.2)" : "none" }}>{label}</button>
               ))}
             </div>
@@ -451,7 +452,7 @@ function Dashboard({ scheduleRecords, onScheduleChange, isAdmin }) {
           {/* Day names */}
           <div style={{ display:"grid", gridTemplateColumns:"repeat(7,1fr)", gap:"clamp(4px, 1vw, 10px)", marginBottom:8 }}>
             {["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"].map(d => (
-              <div key={d} style={{ fontFamily:F, fontSize:"clamp(11px, 1vw, 13px)", fontWeight:700, color:C.muted, textAlign:"center", letterSpacing:"0.12em", textTransform:"uppercase", whiteSpace:"nowrap", padding:"6px 0", borderBottom:`1px solid ${C.border}` }}>
+              <div key={d} style={{ fontFamily:F, fontSize:"clamp(12px, 1.1vw, 14px)", fontWeight:700, color:C.text, textAlign:"center", letterSpacing:"0.1em", textTransform:"uppercase", whiteSpace:"nowrap", padding:"6px 0", borderBottom:`1px solid ${C.border}` }}>
                 <span className="wd-full">{d}</span><span className="wd-short">{d.slice(0, 3)}</span>
               </div>
             ))}
@@ -473,7 +474,7 @@ function Dashboard({ scheduleRecords, onScheduleChange, isAdmin }) {
                   }}>
                     <FieldShape
                       fill={isSel ? `linear-gradient(180deg, #F6E6DA, ${C.cream})` : isToday ? "rgba(237,216,200,0.12)" : "linear-gradient(180deg, rgba(74,13,13,0.72), rgba(46,7,7,0.72))"}
-                      line={isSel ? "rgba(160,20,30,0.6)" : isToday ? "rgba(237,216,200,0.55)" : "rgba(255,110,110,0.45)"}
+                      line={isSel ? "rgba(160,20,30,0.7)" : isToday ? "rgba(237,216,200,0.75)" : "rgba(255,130,130,0.6)"}
                     />
                     {picked > 0 && <div style={{ position:"absolute", top:-6, right:-6, minWidth:20, height:20, padding:"0 5px", borderRadius:10, background:C.green, color:C.bgDeep, fontFamily:F, fontSize:11, fontWeight:700, display:"flex", alignItems:"center", justifyContent:"center", boxShadow:"0 2px 6px rgba(0,0,0,0.35)" }}>{picked}</div>}
                     <div style={{ fontFamily:FH, fontSize:"clamp(21px, min(2.8vw, 4vh), 34px)", color: isSel ? C.bgDeep : "#FFFFFF", lineHeight:1 }}>{Number(day.slice(8))}</div>
@@ -492,7 +493,7 @@ function Dashboard({ scheduleRecords, onScheduleChange, isAdmin }) {
             {(isAdmin ? [[C.green,"Open"],[C.red,"Booked"]] : [[C.green,"Slots available · tap dates to select slots"]]).map(([col,lbl]) => (
               <div key={lbl} style={{ display:"flex", alignItems:"center", gap:6 }}>
                 <div style={{ width:8, height:8, borderRadius:"50%", background:col }} />
-                <span style={{ fontFamily:F, fontSize:10, color:C.faint, letterSpacing:1, textTransform:"uppercase" }}>{lbl}</span>
+                <span style={{ fontFamily:F, fontSize:11, color:C.faint, letterSpacing:1, textTransform:"uppercase" }}>{lbl}</span>
               </div>
             ))}
           </div>
@@ -512,7 +513,7 @@ function Dashboard({ scheduleRecords, onScheduleChange, isAdmin }) {
               {(isAdmin ? [[openCount, C.green,"Open"],[bookedCount, C.red,"Booked"]] : [[openCount, C.green,"Open"]]).map(([n,col,lbl]) => (
                 <div key={lbl} style={{ textAlign:"center" }}>
                   <div style={{ fontFamily:FH, fontSize:28, color:col }}>{n}</div>
-                  <div style={{ fontFamily:F, fontSize:9, color:C.faint, letterSpacing:1.5, textTransform:"uppercase" }}>{lbl}</div>
+                  <div style={{ fontFamily:F, fontSize:11, color:C.faint, letterSpacing:1.5, textTransform:"uppercase" }}>{lbl}</div>
                 </div>
               ))}
             </div>
@@ -533,7 +534,7 @@ function Dashboard({ scheduleRecords, onScheduleChange, isAdmin }) {
                   <div style={{ width:9, height:9, borderRadius:"50%", background:PERIOD_COLOR[period] }} />
                   <span style={{ fontFamily:FH, fontSize:11, color:C.muted, letterSpacing:2, textTransform:"uppercase" }}>{period}</span>
                   <div style={{ flex:1, height:1, background:C.border }} />
-                  <span style={{ fontFamily:F, fontSize:10, color:C.faint }}>{range[0].time} – {range[range.length-1].end}</span>
+                  <span style={{ fontFamily:F, fontSize:11, color:C.faint }}>{range[0].time} – {range[range.length-1].end}</span>
                 </div>
                 <div style={{ display:"flex", flexDirection:"column", gap:6 }}>
                   {pSlots.map(sl => {
@@ -542,11 +543,11 @@ function Dashboard({ scheduleRecords, onScheduleChange, isAdmin }) {
                       <div key={sl.id} className="slot-card" style={{ background:C.surface, borderRadius:10, padding:"14px 18px", display:"flex", alignItems:"center", gap:16, borderLeft:`4px solid ${isOpen ? C.green : C.red}` }}>
                         <div style={{ minWidth:108 }}>
                           <div style={{ fontFamily:FH, fontSize:16, color:"#FFFFFF", letterSpacing:0.3 }}>{sl.time}</div>
-                          <div style={{ fontFamily:F, fontSize:9, color:C.faint, marginTop:2 }}>– {sl.end}</div>
+                          <div style={{ fontFamily:F, fontSize:11, color:C.faint, marginTop:2 }}>– {sl.end}</div>
                         </div>
                         <div style={{ minWidth:80, textAlign:"right" }}>
                           <div style={{ fontFamily:FH, fontSize:17, color:"#FFFFFF" }}>৳{sl.price.toLocaleString()}</div>
-                          <div style={{ fontFamily:F, fontSize:9, color:C.faint, letterSpacing:1, textTransform:"uppercase" }}>per slot</div>
+                          <div style={{ fontFamily:F, fontSize:11, color:C.faint, letterSpacing:1, textTransform:"uppercase" }}>per slot</div>
                         </div>
                         <div style={{ flex:1 }}>
                           {isOpen ? (
@@ -554,8 +555,8 @@ function Dashboard({ scheduleRecords, onScheduleChange, isAdmin }) {
                           ) : (
                             <div>
                               <div style={{ fontFamily:F, fontSize:12, color:C.red, fontWeight:700 }}>{sl.customer}</div>
-                              <div style={{ fontFamily:F, fontSize:9, color:C.faint, letterSpacing:1, textTransform:"uppercase", marginTop:2 }}>● Booked{sl.phone ? ` · ${sl.phone}` : ""}</div>
-                              {sl.due > 0 && <div style={{ fontFamily:F, fontSize:10, color:C.gold, marginTop:4, fontWeight:700 }}>Due ৳{sl.due.toLocaleString()}</div>}
+                              <div style={{ fontFamily:F, fontSize:11, color:C.faint, letterSpacing:1, textTransform:"uppercase", marginTop:2 }}>● Booked{sl.phone ? ` · ${sl.phone}` : ""}</div>
+                              {sl.due > 0 && <div style={{ fontFamily:F, fontSize:11, color:C.gold, marginTop:4, fontWeight:700 }}>Due ৳{sl.due.toLocaleString()}</div>}
                             </div>
                           )}
                         </div>
@@ -686,7 +687,7 @@ function Dashboard({ scheduleRecords, onScheduleChange, isAdmin }) {
             </div>
             <div style={{ textAlign:"right" }}>
               <div style={{ fontFamily:FH, fontSize:36, color:"#FFFFFF", lineHeight:1, letterSpacing:-0.5 }}>৳{modalSlot.price.toLocaleString()}</div>
-              <div style={{ fontFamily:F, fontSize:9, color:C.faint, letterSpacing:2, textTransform:"uppercase", marginTop:5 }}>{modalSlot.period} Rate</div>
+              <div style={{ fontFamily:F, fontSize:11, color:C.faint, letterSpacing:2, textTransform:"uppercase", marginTop:5 }}>{modalSlot.period} Rate</div>
             </div>
           </div>
 
@@ -767,16 +768,16 @@ function MyBookings({ scheduleRecords, onNavigate }) {
       <div key={b.recordKey} className="booking-row" style={{ background:C.surface, borderRadius:12, padding:"16px 20px", display:"flex", alignItems:"center", gap:16, borderLeft:`4px solid ${chip[1]}`, opacity: b.played ? 0.75 : 1 }}>
         <div style={{ minWidth:120 }}>
           <div style={{ fontFamily:FH, fontSize:16, color:"#FFFFFF", letterSpacing:0.3 }}>{new Date(`${b.date}T12:00:00`).toLocaleDateString("en-US", { weekday:"short" })}, {dateLabel(b.date)}</div>
-          <div style={{ fontFamily:F, fontSize:10, color:C.faint, marginTop:3, letterSpacing:1, textTransform:"uppercase" }}>{b.slot.period}</div>
+          <div style={{ fontFamily:F, fontSize:11, color:C.faint, marginTop:3, letterSpacing:1, textTransform:"uppercase" }}>{b.slot.period}</div>
         </div>
         <div style={{ flex:1 }}>
           <div style={{ fontFamily:F, fontSize:14, fontWeight:700, color:"#FFFFFF" }}>{b.slot.label}</div>
           <div style={{ fontFamily:F, fontSize:11, color:chip[1], marginTop:3, fontWeight:700, letterSpacing:1, textTransform:"uppercase" }}>● {chip[0]}</div>
-          {b.receiptId && <div style={{ fontFamily:F, fontSize:10, color:C.faint, marginTop:3 }}>Receipt {b.receiptId}</div>}
+          {b.receiptId && <div style={{ fontFamily:F, fontSize:11, color:C.faint, marginTop:3 }}>Receipt {b.receiptId}</div>}
         </div>
         <div style={{ textAlign:"right", minWidth:110 }}>
           <div style={{ fontFamily:FH, fontSize:17, color:"#FFFFFF" }}>{money(b.slot.price)}</div>
-          <div style={{ fontFamily:F, fontSize:10, color: b.due > 0 ? C.gold : C.green, marginTop:3, fontWeight:700 }}>{b.due > 0 ? `Paid ${money(b.paid)} · Due ${money(b.due)}` : "Fully paid"}</div>
+          <div style={{ fontFamily:F, fontSize:11, color: b.due > 0 ? C.gold : C.green, marginTop:3, fontWeight:700 }}>{b.due > 0 ? `Paid ${money(b.paid)} · Due ${money(b.due)}` : "Fully paid"}</div>
         </div>
       </div>
     );
@@ -804,7 +805,7 @@ function MyBookings({ scheduleRecords, onNavigate }) {
           <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(130px, 1fr))", gap:10, marginBottom:24 }}>
             {[["Total booked", mine.length, "#FFFFFF"], ["Played", played.length, C.cream], ["Left to play", upcoming.length, C.green], ["Paid", money(totalPaid), C.cream], ["Due", money(totalDue), C.gold]].map(([label, value, color]) => (
               <div key={label} style={{ background:C.surface, borderRadius:12, padding:"16px 18px" }}>
-                <div style={{ fontFamily:F, fontSize:10, color:C.faint, letterSpacing:1.5, textTransform:"uppercase" }}>{label}</div>
+                <div style={{ fontFamily:F, fontSize:11, color:C.faint, letterSpacing:1.5, textTransform:"uppercase" }}>{label}</div>
                 <div style={{ fontFamily:FH, fontSize:26, color, marginTop:6 }}>{value}</div>
               </div>
             ))}
@@ -854,7 +855,7 @@ function Schedule({ scheduleRecords, onScheduleChange }) {
       <div style={{ display:"flex", gap:10, marginBottom:14, flexWrap:"wrap" }}>
         {[["Booked", bookedCount, C.red], ["On hold", holdCount, C.gold], ["Available", 112 - bookedCount - holdCount, C.green]].map(([label, count, color]) => (
           <div key={label} style={{ background:C.surface, borderRadius:9, padding:"10px 15px", minWidth:118 }}>
-            <div style={{ color:C.faint, fontSize:9, letterSpacing:1.5, textTransform:"uppercase" }}>{label}</div>
+            <div style={{ color:C.faint, fontSize:11, letterSpacing:1.5, textTransform:"uppercase" }}>{label}</div>
             <div style={{ color, fontFamily:FH, fontSize:20, marginTop:4 }}>{count}</div>
           </div>
         ))}
@@ -866,31 +867,31 @@ function Schedule({ scheduleRecords, onScheduleChange }) {
             <tr>
               <th style={{ width:170, padding:12, textAlign:"left", color:C.cream, fontFamily:FH, fontSize:12, letterSpacing:1, borderBottom:`1px solid ${C.border}`, position:"sticky", left:0, background:C.bgDeep, zIndex:2 }}>TIME SLOT</th>
               {weekDates.map(date => <th key={date} style={{ padding:"11px 8px", textAlign:"center", color:C.cream, fontFamily:FH, fontSize:12, letterSpacing:0.6, borderBottom:`1px solid ${C.border}`, background:C.bgDeep }}>
-                {new Date(`${date}T12:00:00`).toLocaleDateString("en-US", { weekday:"short" }).toUpperCase()}<div style={{ color:C.faint, fontFamily:F, fontSize:10, marginTop:4 }}>{dateLabel(date)}</div>
+                {new Date(`${date}T12:00:00`).toLocaleDateString("en-US", { weekday:"short" }).toUpperCase()}<div style={{ color:C.faint, fontFamily:F, fontSize:11, marginTop:4 }}>{dateLabel(date)}</div>
               </th>)}
             </tr>
           </thead>
           <tbody>
             {SCHEDULE_TIMES.map(slot => <tr key={slot.id}>
               <th style={{ padding:"10px 12px", textAlign:"left", color:C.text, fontFamily:F, fontSize:11, fontWeight:700, borderBottom:`1px solid ${C.border}`, position:"sticky", left:0, background:C.surface, zIndex:1 }}>
-                {slot.label}<div style={{ color:C.faint, fontSize:9, marginTop:4 }}>{slot.period} · ৳{slot.price.toLocaleString()}</div>
+                {slot.label}<div style={{ color:C.faint, fontSize:11, marginTop:4 }}>{slot.period} · ৳{slot.price.toLocaleString()}</div>
               </th>
               {weekDates.map(date => {
                 const record = scheduleRecords[`${date}-${slot.id}`] || { status:"Available", customer:"", phone:"" };
                 const statusColor = record.status === "Booked" ? C.red : record.status === "Hold" ? C.gold : C.green;
                 return <td key={date} style={{ padding:6, verticalAlign:"top", borderBottom:`1px solid ${C.border}`, borderLeft:`1px solid ${C.border}` }}>
-                  <select aria-label={`${dateLabel(date)} ${slot.label} status`} value={record.status} onChange={event => updateCell(date, slot.id, { status:event.target.value })} style={{ width:"100%", padding:"7px 6px", borderRadius:6, border:`1px solid ${C.borderMid}`, background:C.bgDeep, color:statusColor, fontSize:10, fontWeight:700 }}>
+                  <select aria-label={`${dateLabel(date)} ${slot.label} status`} value={record.status} onChange={event => updateCell(date, slot.id, { status:event.target.value })} style={{ width:"100%", padding:"7px 6px", borderRadius:6, border:`1px solid ${C.borderMid}`, background:C.bgDeep, color:statusColor, fontSize:11, fontWeight:700 }}>
                     <option>Available</option><option>Booked</option><option>Hold</option>
                   </select>
-                  {record.status !== "Available" && <Input aria-label={`${dateLabel(date)} ${slot.label} booked by`} value={record.customer || ""} onChange={event => updateCell(date, slot.id, { customer:event.target.value })} placeholder="Booked by" style={{ padding:"7px 8px", marginTop:5, fontSize:10 }} />}
-                  {record.status !== "Available" && <Input aria-label={`${dateLabel(date)} ${slot.label} phone`} value={record.phone || ""} onChange={event => updateCell(date, slot.id, { phone:event.target.value })} placeholder="Phone (optional)" style={{ padding:"7px 8px", marginTop:5, fontSize:10 }} />}
+                  {record.status !== "Available" && <Input aria-label={`${dateLabel(date)} ${slot.label} booked by`} value={record.customer || ""} onChange={event => updateCell(date, slot.id, { customer:event.target.value })} placeholder="Booked by" style={{ padding:"7px 8px", marginTop:5, fontSize:11 }} />}
+                  {record.status !== "Available" && <Input aria-label={`${dateLabel(date)} ${slot.label} phone`} value={record.phone || ""} onChange={event => updateCell(date, slot.id, { phone:event.target.value })} placeholder="Phone (optional)" style={{ padding:"7px 8px", marginTop:5, fontSize:11 }} />}
                 </td>;
               })}
             </tr>)}
           </tbody>
         </table>
       </div>
-      <div style={{ color:C.faint, fontSize:10, marginTop:10 }}>The workbook’s four weekly tabs are represented here. New edits are saved locally and remain after refreshing this browser.</div>
+      <div style={{ color:C.faint, fontSize:11, marginTop:10 }}>The workbook’s four weekly tabs are represented here. New edits are saved locally and remain after refreshing this browser.</div>
     </div>
   );
 }
@@ -922,7 +923,7 @@ function LiveSlots({ scheduleRecords, onScheduleChange }) {
             <div key={sl.id} className="live-slot-card" style={{ background:C.surface, borderRadius:12, padding:"18px 22px", display:"flex", alignItems:"center", gap:20, borderLeft:`5px solid ${isOpen ? C.green : C.red}` }}>
               <div style={{ minWidth:130 }}>
                 <div style={{ fontFamily:FH, fontSize:16, color:"#FFFFFF", letterSpacing:0.5 }}>{sl.time}</div>
-                <div style={{ fontFamily:F, fontSize:10, color:C.faint, marginTop:3, letterSpacing:1, textTransform:"uppercase" }}>1h 30m</div>
+                <div style={{ fontFamily:F, fontSize:11, color:C.faint, marginTop:3, letterSpacing:1, textTransform:"uppercase" }}>1h 30m</div>
               </div>
               {isOpen ? (
                 <div style={{ flex:1 }}>
@@ -936,7 +937,7 @@ function LiveSlots({ scheduleRecords, onScheduleChange }) {
               )}
               <div style={{ textAlign:"right" }}>
                 <div style={{ fontFamily:FH, fontSize:20, color:"#FFFFFF" }}>৳{sl.price.toLocaleString()}</div>
-                <div style={{ fontFamily:F, fontSize:9, color:C.faint, textTransform:"uppercase", letterSpacing:1 }}>{isOpen ? "Day Rate" : "Advance"}</div>
+                <div style={{ fontFamily:F, fontSize:11, color:C.faint, textTransform:"uppercase", letterSpacing:1 }}>{isOpen ? "Day Rate" : "Advance"}</div>
               </div>
             </div>
           );
@@ -994,9 +995,9 @@ function Bookings({ bookings = [], onUpdateBooking }) {
       <div className="bookings-layout" style={{ display:"grid", gridTemplateColumns:"280px 1fr", gap:18, alignItems:"start" }}>
         <div style={{ background:C.surface, borderRadius:14, padding:20 }}>
           <div style={{ fontFamily:FH, fontSize:17, color:"#FFFFFF", marginBottom:16, textTransform:"uppercase" }}>November 2026</div>
-          <div style={{ display:"grid", gridTemplateColumns:"repeat(7,1fr)", gap:4, marginBottom:8 }}>{["Mo","Tu","We","Th","Fr","Sa","Su"].map(d => <div key={d} style={{ fontSize:9, color:C.faint, textAlign:"center" }}>{d}</div>)}</div>
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(7,1fr)", gap:4, marginBottom:8 }}>{["Mo","Tu","We","Th","Fr","Sa","Su"].map(d => <div key={d} style={{ fontSize:11, color:C.faint, textAlign:"center" }}>{d}</div>)}</div>
           <div style={{ display:"grid", gridTemplateColumns:"repeat(7,1fr)", gap:4 }}>
-            {Array.from({ length:42 }, (_, i) => { const offset = (new Date(2026, 10, 1).getDay() + 6) % 7; const value = i - offset + 1; const day = value >= 1 && value <= 30 ? value : null; const label = day ? `Nov ${day}` : null; const count = bookings.filter(b => b.date === label).length; return <div key={i} onClick={() => label && setSelectedDate(label)} style={{ minHeight:39, borderRadius:7, padding:"5px 2px", textAlign:"center", cursor:label ? "pointer" : "default", background:selectedDate === label ? C.cream : "transparent", color:selectedDate === label ? C.bgDeep : "#FFFFFF" }}>{day && <><div style={{ fontFamily:FH, fontSize:12 }}>{day}</div>{count > 0 && <div style={{ color:selectedDate === label ? C.bgDeep : C.red, fontSize:9, marginTop:3 }}>{count} due</div>}</>}</div>; })}
+            {Array.from({ length:42 }, (_, i) => { const offset = (new Date(2026, 10, 1).getDay() + 6) % 7; const value = i - offset + 1; const day = value >= 1 && value <= 30 ? value : null; const label = day ? `Nov ${day}` : null; const count = bookings.filter(b => b.date === label).length; return <div key={i} onClick={() => label && setSelectedDate(label)} style={{ minHeight:39, borderRadius:7, padding:"5px 2px", textAlign:"center", cursor:label ? "pointer" : "default", background:selectedDate === label ? C.cream : "transparent", color:selectedDate === label ? C.bgDeep : "#FFFFFF" }}>{day && <><div style={{ fontFamily:FH, fontSize:12 }}>{day}</div>{count > 0 && <div style={{ color:selectedDate === label ? C.bgDeep : C.red, fontSize:11, marginTop:3 }}>{count} due</div>}</>}</div>; })}
           </div>
         </div>
         <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
@@ -1006,16 +1007,16 @@ function Bookings({ bookings = [], onUpdateBooking }) {
           <div key={bk.id} className="booking-row" style={{ background:C.surface, borderRadius:12, padding:"18px 22px", display:"flex", alignItems:"center", gap:16 }}>
             <div style={{ minWidth:70 }}>
               <div style={{ fontFamily:FH, fontSize:12, color:C.faint, letterSpacing:1 }}>{bk.id}</div>
-              <div style={{ fontFamily:F, fontSize:10, color:C.faint, marginTop:2 }}>{bk.date}</div>
+              <div style={{ fontFamily:F, fontSize:11, color:C.faint, marginTop:2 }}>{bk.date}</div>
             </div>
             <div style={{ flex:1 }}>
               <div style={{ fontFamily:F, fontSize:15, fontWeight:700, color:"#FFFFFF" }}>{bk.customer}</div>
               <div style={{ fontFamily:F, fontSize:11, color:C.muted, marginTop:2 }}>{bk.phone} · {bk.slot} · via {bk.emp}</div>
-              <div style={{ fontFamily:F, fontSize:10, color:C.faint, marginTop:5 }}>Paid ৳{(bk.paid ?? bk.advance).toLocaleString()} · {bk.due > 0 ? `৳${bk.due.toLocaleString()} still due` : "No payment due"}</div>
+              <div style={{ fontFamily:F, fontSize:11, color:C.faint, marginTop:5 }}>Paid ৳{(bk.paid ?? bk.advance).toLocaleString()} · {bk.due > 0 ? `৳${bk.due.toLocaleString()} still due` : "No payment due"}</div>
             </div>
             <div style={{ textAlign:"right", minWidth:120 }}>
               <div style={{ fontFamily:FH, fontSize:18, color:"#FFFFFF" }}>৳{bk.price.toLocaleString()}</div>
-              <div style={{ fontFamily:F, fontSize:10, color: bk.due > 0 ? C.red : C.green, marginTop:2, fontWeight:700 }}>
+              <div style={{ fontFamily:F, fontSize:11, color: bk.due > 0 ? C.red : C.green, marginTop:2, fontWeight:700 }}>
                 {bk.closed ? "Deal Closed" : bk.due > 0 ? `Due ৳${bk.due.toLocaleString()}` : "Fully Paid"}
               </div>
             </div>
@@ -1080,7 +1081,7 @@ function Earnings({ bookings = [] }) {
 
       <div className="earnings-summary" style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:10, marginBottom:18 }}>
         {[["Total slot value", slotValue, C.cream], ["Money collected", collected, C.green], ["We gave discount", discount, C.red], ["After salaries", net, C.gold]].map(([label, value, color]) => (
-          <div key={label} style={{ background:C.surface, borderRadius:12, padding:"18px 20px" }}><div style={{ fontFamily:F, fontSize:10, color:C.faint, letterSpacing:1.5, textTransform:"uppercase" }}>{label}</div><div style={{ fontFamily:FH, fontSize:25, color, marginTop:8 }}>{money(value)}</div></div>
+          <div key={label} style={{ background:C.surface, borderRadius:12, padding:"18px 20px" }}><div style={{ fontFamily:F, fontSize:11, color:C.faint, letterSpacing:1.5, textTransform:"uppercase" }}>{label}</div><div style={{ fontFamily:FH, fontSize:25, color, marginTop:8 }}>{money(value)}</div></div>
         ))}
       </div>
 
@@ -1099,7 +1100,7 @@ function Earnings({ bookings = [] }) {
         </div>
 
         <div style={{ background:C.surface, borderRadius:14, padding:22 }}>
-          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16 }}><div style={{ fontFamily:FH, fontSize:18, color:"#FFFFFF", letterSpacing:1, textTransform:"uppercase" }}>Employee Salaries</div><button onClick={() => { setSalaryRows([...salaryRows, { id:nextSalaryId, employee:"Masum", amount:0 }]); setNextSalaryId(nextSalaryId + 1); }} style={{ fontFamily:FH, fontSize:10, letterSpacing:1, padding:"8px 12px", borderRadius:6, cursor:"pointer", background:C.cream, color:C.bgDeep, border:"none" }}>+ Add Payment</button></div>
+          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16 }}><div style={{ fontFamily:FH, fontSize:18, color:"#FFFFFF", letterSpacing:1, textTransform:"uppercase" }}>Employee Salaries</div><button onClick={() => { setSalaryRows([...salaryRows, { id:nextSalaryId, employee:"Masum", amount:0 }]); setNextSalaryId(nextSalaryId + 1); }} style={{ fontFamily:FH, fontSize:11, letterSpacing:1, padding:"8px 12px", borderRadius:6, cursor:"pointer", background:C.cream, color:C.bgDeep, border:"none" }}>+ Add Payment</button></div>
           {salaryRows.map(row => <div key={row.id} className="salary-row" style={{ display:"grid", gridTemplateColumns:"1fr 120px 32px", gap:8, marginBottom:8 }}><Sel value={row.employee} onChange={e => setSalaryRows(salaryRows.map(item => item.id === row.id ? { ...item, employee:e.target.value } : item))}>{EMPLOYEES.map(employee => <option key={employee.id}>{employee.name}</option>)}</Sel><Input type="number" min="0" value={row.amount} onChange={e => setSalaryRows(salaryRows.map(item => item.id === row.id ? { ...item, amount:e.target.value } : item))} placeholder="Amount" /><button onClick={() => setSalaryRows(salaryRows.filter(item => item.id !== row.id))} title="Remove salary payment" style={{ background:"transparent", border:`1px solid ${C.borderMid}`, color:C.red, borderRadius:6, cursor:"pointer" }}>×</button></div>)}
           <div style={{ marginTop:16, paddingTop:16, borderTop:`1px solid ${C.border}`, display:"flex", justifyContent:"space-between", color:C.muted, fontSize:12 }}><span>Total salary cost</span><strong style={{ color:C.red }}>{money(salaries)}</strong></div>
           <div style={{ marginTop:10, display:"flex", justifyContent:"space-between", color:C.muted, fontSize:12 }}><span>Net earnings after salary</span><strong style={{ color:C.green }}>{money(net)}</strong></div>
@@ -1218,6 +1219,7 @@ export default function App() {
     const mobileStyles = document.createElement("style");
     mobileStyles.textContent = `
       * { box-sizing: border-box; }
+      .app-root input::placeholder { color: #BFA19C; opacity: 1; }
       html, body, .app-root, .app-root * { cursor: ${footballCursor(false)}, auto; }
       .app-root input, .app-root textarea { cursor: text !important; }
       .app-root button:not(:disabled), .app-root select, .app-root label, .app-root input[type=checkbox], .app-root [style*="cursor: pointer"] { cursor: ${footballCursor(true)}, pointer !important; }
@@ -1225,6 +1227,7 @@ export default function App() {
       .cal-day.is-sel { filter: drop-shadow(0 0 12px rgba(237,216,200,0.4)); }
       @media (hover: hover) { .cal-day:hover { transform: translateY(-2px); filter: drop-shadow(0 6px 12px rgba(255,70,70,0.4)); } }
       .wd-short { display: none; }
+      .lbl-short { display: none; }
       @media (max-width: 860px) { .wd-full { display: none; } .wd-short { display: inline; } }
       body { margin: 0; }
       @media (max-width: 700px) {
@@ -1249,9 +1252,13 @@ export default function App() {
         .date-header > div:last-child { margin-left: auto; }
         .salary-row { grid-template-columns: 1fr 100px 32px !important; }
         .admin-id { display: none !important; }
+        .month-title { font-size: 15px !important; letter-spacing: 0.5px !important; }
+        .month-btn { font-size: 11px !important; padding: 5px 9px !important; letter-spacing: 0.5px !important; }
+        .lbl-long { display: none; }
+        .lbl-short { display: inline !important; }
         .price-cards { width: 100%; flex-wrap: nowrap !important; gap: 6px !important; }
         .price-card { flex: 1 1 0; min-width: 0; padding: 5px 6px !important; text-align: center !important; }
-        .price-card .pc-label { font-size: 8px !important; letter-spacing: 0.5px !important; margin-bottom: 3px !important; line-height: 1.3; }
+        .price-card .pc-label { font-size: 10px !important; letter-spacing: 0.5px !important; margin-bottom: 3px !important; line-height: 1.3; }
         .price-card .pc-price { font-size: 16px !important; }
       }
       @media (max-width: 420px) {
@@ -1293,7 +1300,7 @@ export default function App() {
               <>
                 <div className="admin-id" style={{ textAlign:"right" }}>
                   <div style={{ fontFamily:FH, fontSize:14, color:"#FFFFFF", letterSpacing:1, textTransform:"uppercase" }}>Super Admin</div>
-                  <div style={{ fontFamily:F, fontSize:10, color:C.faint, letterSpacing:1, textTransform:"uppercase" }}>Nov 10, 2026</div>
+                  <div style={{ fontFamily:F, fontSize:11, color:C.faint, letterSpacing:1, textTransform:"uppercase" }}>Nov 10, 2026</div>
                 </div>
                 <div style={{ width:38, height:38, background:C.cream, borderRadius:8, display:"flex", alignItems:"center", justifyContent:"center", fontFamily:FH, fontSize:14, color:C.bgDeep, letterSpacing:1 }}>SA</div>
                 <button onClick={logout} style={{ fontFamily:FH, fontSize:11, letterSpacing:1, textTransform:"uppercase", padding:"6px 12px", whiteSpace:"nowrap", borderRadius:7, cursor:"pointer", background:"transparent", color:C.muted, border:`1px solid ${C.borderMid}` }}>Log out</button>
@@ -1309,7 +1316,7 @@ export default function App() {
             {navItems.map(n => {
               const active = currentPage === n.id;
               return (
-                <button key={n.id} onClick={() => setPage(n.id)} style={{ fontFamily:FH, fontSize:11, letterSpacing:1, textTransform:"uppercase", padding:"5px 12px", borderRadius:7, cursor:"pointer", whiteSpace:"nowrap", background: active ? `linear-gradient(180deg, ${C.surfaceHigh}, #5E1414)` : "transparent", color: active ? "#FFFFFF" : C.faint, border:`1px solid ${active ? "rgba(255,150,150,0.3)" : "transparent"}`, boxShadow: active ? "0 4px 14px rgba(255,60,60,0.25)" : "none" }}>{n.label}</button>
+                <button key={n.id} onClick={() => setPage(n.id)} style={{ fontFamily:FH, fontSize:12, letterSpacing:1, textTransform:"uppercase", padding:"5px 12px", borderRadius:7, cursor:"pointer", whiteSpace:"nowrap", background: active ? `linear-gradient(180deg, ${C.surfaceHigh}, #5E1414)` : "transparent", color: active ? "#FFFFFF" : C.faint, border:`1px solid ${active ? "rgba(255,150,150,0.3)" : "transparent"}`, boxShadow: active ? "0 4px 14px rgba(255,60,60,0.25)" : "none" }}>{n.label}</button>
               );
             })}
           </div>
