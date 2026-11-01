@@ -81,12 +81,12 @@ function FieldShape({ fill, line, r = FIELD_R }) {
   return (
     <div aria-hidden="true" style={{ position:"absolute", inset:0, zIndex:-1, overflow:"hidden", pointerEvents:"none" }}>
       <div style={{ position:"absolute", inset:0, background:fill, WebkitMask:mask, mask }} />
-      <div style={{ ...edge, top:0, left:r, right:r, height:0, borderTopWidth:1.5 }} />
-      <div style={{ ...edge, bottom:0, left:r, right:r, height:0, borderBottomWidth:1.5 }} />
-      <div style={{ ...edge, left:0, top:r, bottom:r, width:0, borderLeftWidth:1.5 }} />
-      <div style={{ ...edge, right:0, top:r, bottom:r, width:0, borderRightWidth:1.5 }} />
+      <div className="field-edge" style={{ ...edge, top:0, left:r, right:r, height:0, borderTopWidth:1.5 }} />
+      <div className="field-edge" style={{ ...edge, bottom:0, left:r, right:r, height:0, borderBottomWidth:1.5 }} />
+      <div className="field-edge" style={{ ...edge, left:0, top:r, bottom:r, width:0, borderLeftWidth:1.5 }} />
+      <div className="field-edge" style={{ ...edge, right:0, top:r, bottom:r, width:0, borderRightWidth:1.5 }} />
       {[[0, 0], [1, 0], [0, 1], [1, 1]].map(([x, y]) => (
-        <div key={`${x}${y}`} style={{ ...edge, width:r * 2, height:r * 2, borderRadius:"50%", borderWidth:1.5, left: x ? `calc(100% - ${r}px)` : -r, top: y ? `calc(100% - ${r}px)` : -r }} />
+        <div key={`${x}${y}`} className="field-edge" style={{ ...edge, width:r * 2, height:r * 2, borderRadius:"50%", borderWidth:1.5, left: x ? `calc(100% - ${r}px)` : -r, top: y ? `calc(100% - ${r}px)` : -r }} />
       ))}
     </div>
   );
@@ -1228,7 +1228,10 @@ export default function App() {
       .app-root button:not(:disabled), .app-root select, .app-root label, .app-root input[type=checkbox], .app-root [style*="cursor: pointer"] { cursor: ${footballCursor(true)}, pointer !important; }
       .cal-day { transition: transform 0.15s ease, filter 0.15s ease; }
       .cal-day.is-sel { filter: drop-shadow(0 0 12px rgba(230,80,27,0.6)); }
-      @media (hover: hover) { .cal-day:hover { transform: translateY(-2px); filter: drop-shadow(0 6px 12px rgba(230,80,27,0.55)); } }
+      @media (hover: hover) {
+        .cal-day:hover { transform: translateY(-2px); filter: drop-shadow(0 0 10px rgba(255,255,255,0.45)); }
+        .cal-day:hover .field-edge { border-color: rgba(255,255,255,0.95) !important; }
+      }
       .wd-short { display: none; }
       .lbl-short { display: none; }
       @media (max-width: 860px) { .wd-full { display: none; } .wd-short { display: inline; } }
