@@ -6,12 +6,15 @@ const F  = "Arial, sans-serif";
 const FH = "'Anton', Arial Black, sans-serif";
 
 const C = {
-  bgDeep:      "#3C0A0A",
-  bg:          "#5C1010",
-  surface:     "#6E1818",
-  surfaceHigh: "#7D2222",
-  border:      "rgba(255,200,190,0.22)",
-  borderMid:   "rgba(255,200,190,0.38)",
+  // Brand palette: ink #280905 · wine #740A03 · red #C3110C · orange #E6501B
+  bgDeep:      "#280905",   // ink: top bar, inputs, date boxes
+  bg:          "#4E0A04",   // page (between ink and wine)
+  surface:     "#740A03",   // wine: cards, panels, popups
+  surfaceHigh: "#8C0C06",
+  accent:      "#C3110C",   // red: main buttons, active tab (white text 6.2:1)
+  orange:      "#E6501B",   // orange: highlights, selected date, glows
+  border:      "rgba(255,160,120,0.24)",
+  borderMid:   "rgba(255,160,120,0.4)",
   text:        "#FAF0EE",
   muted:       "#EAD8D4",   // 9.9:1 on page, 7.4:1 on lightest card
   faint:       "#D9BEB9",   // 7.8:1 on page, 5.9:1 on lightest card
@@ -43,7 +46,7 @@ function Field({ label, children }) {
 function Modal({ title, onClose, children }) {
   return (
     <div style={{ position:"fixed", inset:0, background:"rgba(20,0,0,0.75)", display:"flex", alignItems:"center", justifyContent:"center", zIndex:300 }}>
-      <div className="modal-panel" style={{ background:`linear-gradient(165deg, ${C.surfaceHigh}, #5A1212)`, border:"1px solid rgba(255,180,170,0.12)", borderRadius:14, padding:28, width:460, maxWidth:"92vw", maxHeight:"92vh", overflowY:"auto", boxShadow:"0 24px 80px rgba(0,0,0,0.6)" }}>
+      <div className="modal-panel" style={{ background:`linear-gradient(165deg, ${C.surface}, #3A0804)`, border:"1px solid rgba(230,80,27,0.3)", borderRadius:14, padding:28, width:460, maxWidth:"92vw", maxHeight:"92vh", overflowY:"auto", boxShadow:"0 24px 80px rgba(0,0,0,0.6)" }}>
         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:22, paddingBottom:16, borderBottom:`1px solid ${C.border}` }}>
           <span style={{ fontFamily:FH, fontSize:18, color:C.cream, letterSpacing:1, textTransform:"uppercase" }}>{title}</span>
           <button onClick={onClose} style={{ background:C.surfaceHigh, border:`1px solid ${C.border}`, borderRadius:6, width:32, height:32, cursor:"pointer", color:C.muted, fontSize:14, display:"flex", alignItems:"center", justifyContent:"center" }}>✕</button>
@@ -58,7 +61,7 @@ function ModalFooter({ onCancel, onConfirm, confirmLabel }) {
   return (
     <div style={{ display:"flex", gap:10, justifyContent:"flex-end", marginTop:8, paddingTop:16, borderTop:`1px solid ${C.border}` }}>
       <button type="button" onClick={onCancel} style={{ fontFamily:FH, fontSize:12, letterSpacing:1, textTransform:"uppercase", padding:"9px 20px", borderRadius:7, cursor:"pointer", background:"transparent", color:C.muted, border:`1px solid ${C.borderMid}` }}>Cancel</button>
-      <button type="button" onClick={onConfirm} style={{ fontFamily:FH, fontSize:12, letterSpacing:1, textTransform:"uppercase", padding:"9px 20px", borderRadius:7, cursor:"pointer", background:C.cream, color:C.bgDeep, border:"none" }}>{confirmLabel}</button>
+      <button type="button" onClick={onConfirm} style={{ fontFamily:FH, fontSize:12, letterSpacing:1, textTransform:"uppercase", padding:"9px 20px", borderRadius:7, cursor:"pointer", background:C.accent, color:"#FFFFFF", border:"none" }}>{confirmLabel}</button>
     </div>
   );
 }
@@ -116,7 +119,7 @@ function footballCursor(ring) {
     <defs>
       <radialGradient id='shade' cx='0.36' cy='0.32' r='0.75'><stop offset='0' stop-color='#FFFFFF'/><stop offset='0.55' stop-color='#ECECEC'/><stop offset='1' stop-color='#A9A9A9'/></radialGradient>
       <linearGradient id='panel' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='#3A3A3A'/><stop offset='1' stop-color='#050505'/></linearGradient>
-      <linearGradient id='trail' gradientUnits='userSpaceOnUse' x1='0' y1='0' x2='12' y2='12'><stop offset='0' stop-color='#FF3B3B' stop-opacity='0'/><stop offset='1' stop-color='#FF3B3B'/></linearGradient>
+      <linearGradient id='trail' gradientUnits='userSpaceOnUse' x1='0' y1='0' x2='12' y2='12'><stop offset='0' stop-color='#E6501B' stop-opacity='0'/><stop offset='1' stop-color='#E6501B'/></linearGradient>
       <clipPath id='ball'><circle cx='${cx}' cy='${cy}' r='${r}'/></clipPath>
       <filter id='glow' x='-30%' y='-30%' width='160%' height='160%'><feGaussianBlur stdDeviation='1.2'/></filter>
     </defs>
@@ -126,7 +129,7 @@ function footballCursor(ring) {
       <line x1='0.5' y1='12.5' x2='6.5' y2='18.5' stroke-width='1.2'/>
     </g>
     <ellipse cx='19' cy='30.4' rx='7.5' ry='1.3' fill='#000' opacity='0.35'/>
-    ${ring ? `<circle cx='${cx}' cy='${cy}' r='13.4' fill='none' stroke='#FF4D4D' stroke-width='2.4' filter='url(#glow)' opacity='0.9'/><circle cx='${cx}' cy='${cy}' r='13.4' fill='none' stroke='#FF8A8A' stroke-width='1.1'/>` : ""}
+    ${ring ? `<circle cx='${cx}' cy='${cy}' r='13.4' fill='none' stroke='#E6501B' stroke-width='2.4' filter='url(#glow)' opacity='0.9'/><circle cx='${cx}' cy='${cy}' r='13.4' fill='none' stroke='#FF8A50' stroke-width='1.1'/>` : ""}
     <circle cx='${cx}' cy='${cy}' r='${r}' fill='url(#shade)'/>
     <g clip-path='url(#ball)'>
       <g stroke='#1C1C1C' stroke-width='0.9' stroke-linecap='round'>${seams.map(([a, b]) => `<line x1='${a[0].toFixed(2)}' y1='${a[1].toFixed(2)}' x2='${b[0].toFixed(2)}' y2='${b[1].toFixed(2)}'/>`).join("")}</g>
@@ -424,9 +427,9 @@ function Dashboard({ scheduleRecords, onScheduleChange, isAdmin }) {
         </div>
         <div className="price-cards" style={{ display:"flex", gap:10, flexWrap:"wrap" }}>
           {[["6–7:30 AM · 4:30–6 PM", "৳2,800", C.cream], ["7:30 AM – 4:30 PM", "৳2,500", C.cream], ["6 PM – 6 AM", "৳3,199", C.gold]].map(([lbl, price, col]) => (
-            <div key={lbl} className="price-card" style={{ background:`linear-gradient(160deg, ${C.surfaceHigh}, #561212)`, border:"1px solid rgba(255,180,170,0.1)", borderRadius:10, padding:"8px 16px", textAlign:"right", boxShadow:"0 10px 26px rgba(20,0,0,0.35), inset 0 1px 0 rgba(255,220,210,0.08)" }}>
+            <div key={lbl} className="price-card" style={{ background:`linear-gradient(160deg, ${C.surfaceHigh}, #5A0803)`, border:"1px solid rgba(230,80,27,0.3)", borderRadius:10, padding:"8px 16px", textAlign:"right", boxShadow:"0 10px 26px rgba(20,0,0,0.35), inset 0 1px 0 rgba(255,220,210,0.08)" }}>
               <div className="pc-label" style={{ fontFamily:F, fontSize:11, color:C.faint, letterSpacing:2, textTransform:"uppercase", marginBottom:5 }}>{lbl}</div>
-              <div className="pc-price" style={{ fontFamily:FH, fontSize:19, color:col, textShadow:"0 0 16px rgba(255,190,150,0.35)" }}>{price}</div>
+              <div className="pc-price" style={{ fontFamily:FH, fontSize:19, color:col, textShadow:"0 0 16px rgba(230,80,27,0.55)" }}>{price}</div>
             </div>
           ))}
         </div>
@@ -437,14 +440,14 @@ function Dashboard({ scheduleRecords, onScheduleChange, isAdmin }) {
       <div className="dashboard-panels" style={{ display:"grid", gridTemplateColumns: isAdmin ? "minmax(0, 1.2fr) minmax(0, 1fr)" : "minmax(0, 1fr)", gap:18, alignItems:"start" }}>
 
         {/* Left: Calendar */}
-        <div style={{ background:"linear-gradient(160deg, rgba(104,24,24,0.94), rgba(70,13,13,0.96))", border:"1px solid rgba(255,180,170,0.08)", borderRadius:14, padding:"14px 18px", position:"relative", overflow:"hidden", boxShadow:"0 24px 60px rgba(20,0,0,0.45), inset 0 1px 0 rgba(255,220,210,0.07)" }}>
+        <div style={{ background:"linear-gradient(160deg, rgba(116,10,3,0.95), rgba(52,9,4,0.97))", border:"1px solid rgba(230,80,27,0.22)", borderRadius:14, padding:"14px 18px", position:"relative", overflow:"hidden", boxShadow:"0 24px 60px rgba(20,0,0,0.45), inset 0 1px 0 rgba(255,220,210,0.07)" }}>
           <img src={strikeLogo} alt="" aria-hidden="true" style={{ position:"absolute", top:"50%", left:"50%", width:"85%", transform:"translate(-50%, -50%)", opacity:0.035, mixBlendMode:"screen", pointerEvents:"none", zIndex:0 }} />
           <div style={{ position:"relative", zIndex:1 }}>
           <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", gap:10, marginBottom:10 }}>
             <div className="month-title" style={{ fontFamily:FH, fontSize:17, color:"#FFFFFF", letterSpacing:1, textTransform:"uppercase", whiteSpace:"nowrap" }}><span className="lbl-long">{monthLabel}</span><span className="lbl-short">{monthLabelShort}</span></div>
             <div style={{ display:"flex", gap:8, flexShrink:0 }}>
               {[[-1, <>‹ <span className="lbl-long">Previous</span><span className="lbl-short">Prev</span></>, viewMonth > firstMonth], [1, "Next month ›", viewMonth < lastMonth]].map(([n, label, enabled]) => (
-                <button key={n} type="button" disabled={!enabled} onClick={() => shiftMonth(n)} className="month-btn" style={{ fontFamily:FH, fontSize:11, letterSpacing:1, textTransform:"uppercase", padding:"6px 12px", borderRadius:7, whiteSpace:"nowrap", cursor: enabled ? "pointer" : "default", opacity: enabled ? 1 : 0.35, background: n > 0 && enabled ? `linear-gradient(180deg, ${C.surfaceHigh}, #5E1414)` : "transparent", color: enabled ? "#FFFFFF" : C.faint, border:`1px solid ${enabled ? "rgba(255,150,150,0.3)" : C.border}`, boxShadow: n > 0 && enabled ? "0 4px 14px rgba(255,60,60,0.2)" : "none" }}>{label}</button>
+                <button key={n} type="button" disabled={!enabled} onClick={() => shiftMonth(n)} className="month-btn" style={{ fontFamily:FH, fontSize:11, letterSpacing:1, textTransform:"uppercase", padding:"6px 12px", borderRadius:7, whiteSpace:"nowrap", cursor: enabled ? "pointer" : "default", opacity: enabled ? 1 : 0.35, background: n > 0 && enabled ? `linear-gradient(180deg, ${C.accent}, ${C.surfaceHigh})` : "transparent", color: enabled ? "#FFFFFF" : C.faint, border:`1px solid ${enabled ? "rgba(230,80,27,0.6)" : C.border}`, boxShadow: n > 0 && enabled ? "0 4px 14px rgba(230,80,27,0.3)" : "none" }}>{label}</button>
               ))}
             </div>
           </div>
@@ -473,8 +476,8 @@ function Dashboard({ scheduleRecords, onScheduleChange, isAdmin }) {
                     position:"relative", zIndex:0, padding:"clamp(7px, 1.3vh, 13px) 2px clamp(6px, 1vh, 10px)", textAlign:"center", cursor:"pointer",
                   }}>
                     <FieldShape
-                      fill={isSel ? `linear-gradient(180deg, #F6E6DA, ${C.cream})` : isToday ? "rgba(237,216,200,0.12)" : "linear-gradient(180deg, rgba(74,13,13,0.72), rgba(46,7,7,0.72))"}
-                      line={isSel ? "rgba(160,20,30,0.7)" : isToday ? "rgba(237,216,200,0.75)" : "rgba(255,130,130,0.6)"}
+                      fill={isSel ? `linear-gradient(180deg, #F26A33, ${C.orange})` : isToday ? "rgba(230,80,27,0.18)" : "linear-gradient(180deg, rgba(64,10,5,0.82), rgba(40,9,5,0.86))"}
+                      line={isSel ? "rgba(40,9,5,0.6)" : isToday ? "rgba(255,140,90,0.95)" : "rgba(230,80,27,0.7)"}
                     />
                     {picked > 0 && <div style={{ position:"absolute", top:-6, right:-6, minWidth:20, height:20, padding:"0 5px", borderRadius:10, background:C.green, color:C.bgDeep, fontFamily:F, fontSize:11, fontWeight:700, display:"flex", alignItems:"center", justifyContent:"center", boxShadow:"0 2px 6px rgba(0,0,0,0.35)" }}>{picked}</div>}
                     <div style={{ fontFamily:FH, fontSize:"clamp(21px, min(2.8vw, 4vh), 34px)", color: isSel ? C.bgDeep : "#FFFFFF", lineHeight:1 }}>{Number(day.slice(8))}</div>
@@ -585,7 +588,7 @@ function Dashboard({ scheduleRecords, onScheduleChange, isAdmin }) {
             <div style={{ fontFamily:F, fontSize:11, color:C.faint, marginTop:3 }}>Total ৳{cartTotal.toLocaleString()} · {new Set(cartItems.map(c => c.day)).size} day{new Set(cartItems.map(c => c.day)).size === 1 ? "" : "s"}</div>
           </div>
           <button onClick={() => setCart([])} style={{ fontFamily:FH, fontSize:12, letterSpacing:1, textTransform:"uppercase", padding:"10px 16px", borderRadius:8, cursor:"pointer", background:"transparent", color:C.muted, border:`1px solid ${C.borderMid}` }}>Clear</button>
-          <button onClick={openCheckout} style={{ fontFamily:FH, fontSize:12, letterSpacing:1, textTransform:"uppercase", padding:"10px 20px", borderRadius:8, cursor:"pointer", background:C.cream, color:C.bgDeep, border:"none" }}>Continue →</button>
+          <button onClick={openCheckout} style={{ fontFamily:FH, fontSize:12, letterSpacing:1, textTransform:"uppercase", padding:"10px 20px", borderRadius:8, cursor:"pointer", background:C.accent, color:"#FFFFFF", border:"none" }}>Continue →</button>
         </div>
       )}
 
@@ -627,7 +630,7 @@ function Dashboard({ scheduleRecords, onScheduleChange, isAdmin }) {
           <div style={{ display:"flex", alignItems:"center", gap:10, flexWrap:"wrap", marginTop:8, paddingTop:16, borderTop:`1px solid ${C.border}` }}>
             <div style={{ flex:1, minWidth:140, fontFamily:F, fontSize:12, color:C.muted }}>{cartItems.length} selected in total · ৳{cartTotal.toLocaleString()}</div>
             <button type="button" onClick={() => setBookModal(null)} style={{ fontFamily:FH, fontSize:12, letterSpacing:1, textTransform:"uppercase", padding:"9px 16px", borderRadius:7, cursor:"pointer", background:"transparent", color:C.muted, border:`1px solid ${C.borderMid}` }}>Pick another date</button>
-            <button type="button" disabled={cartItems.length === 0} onClick={openCheckout} style={{ fontFamily:FH, fontSize:12, letterSpacing:1, textTransform:"uppercase", padding:"9px 18px", borderRadius:7, cursor: cartItems.length ? "pointer" : "not-allowed", opacity: cartItems.length ? 1 : 0.45, background:C.cream, color:C.bgDeep, border:"none" }}>Continue ({cartItems.length})</button>
+            <button type="button" disabled={cartItems.length === 0} onClick={openCheckout} style={{ fontFamily:FH, fontSize:12, letterSpacing:1, textTransform:"uppercase", padding:"9px 18px", borderRadius:7, cursor: cartItems.length ? "pointer" : "not-allowed", opacity: cartItems.length ? 1 : 0.45, background:C.accent, color:"#FFFFFF", border:"none" }}>Continue ({cartItems.length})</button>
           </div>
         </Modal>
       )}
@@ -640,7 +643,7 @@ function Dashboard({ scheduleRecords, onScheduleChange, isAdmin }) {
               {printBlocked && <div style={{ marginTop:12, background:"rgba(255,221,170,0.08)", border:`1px solid ${C.gold}`, borderRadius:7, padding:"10px 12px", color:C.gold, fontSize:12, lineHeight:1.5 }}>Printing isn't available on this page. Take a screenshot of the receipt to keep it.</div>}
               <div style={{ display:"flex", justifyContent:"flex-end", gap:10, flexWrap:"wrap", marginTop:16, paddingTop:16, borderTop:`1px solid ${C.border}` }}>
                 <button type="button" onClick={() => { setReceipt(null); setBookModal(null); }} style={{ fontFamily:FH, fontSize:12, letterSpacing:1, textTransform:"uppercase", padding:"9px 20px", borderRadius:7, cursor:"pointer", background:"transparent", color:C.muted, border:`1px solid ${C.borderMid}` }}>Done</button>
-                <button type="button" onClick={() => setPrintBlocked(!printReceipt(receipt))} style={{ fontFamily:FH, fontSize:12, letterSpacing:1, textTransform:"uppercase", padding:"9px 20px", borderRadius:7, cursor:"pointer", background:C.cream, color:C.bgDeep, border:"none" }}>Print / Save PDF</button>
+                <button type="button" onClick={() => setPrintBlocked(!printReceipt(receipt))} style={{ fontFamily:FH, fontSize:12, letterSpacing:1, textTransform:"uppercase", padding:"9px 20px", borderRadius:7, cursor:"pointer", background:C.accent, color:"#FFFFFF", border:"none" }}>Print / Save PDF</button>
               </div>
             </div>
           ) : (
@@ -695,7 +698,7 @@ function Dashboard({ scheduleRecords, onScheduleChange, isAdmin }) {
             <div>
               <div style={{ background:"rgba(91,232,154,0.1)", border:`1px solid ${C.green}`, borderRadius:7, padding:"12px 14px", color:C.green, fontSize:12, lineHeight:1.5 }}>{bookingNotice}</div>
               <div style={{ display:"flex", justifyContent:"flex-end", marginTop:16, paddingTop:16, borderTop:`1px solid ${C.border}` }}>
-                <button onClick={() => setBookModal(null)} style={{ fontFamily:FH, fontSize:12, letterSpacing:1, textTransform:"uppercase", padding:"9px 20px", borderRadius:7, cursor:"pointer", background:C.cream, color:C.bgDeep, border:"none" }}>Done</button>
+                <button onClick={() => setBookModal(null)} style={{ fontFamily:FH, fontSize:12, letterSpacing:1, textTransform:"uppercase", padding:"9px 20px", borderRadius:7, cursor:"pointer", background:C.accent, color:"#FFFFFF", border:"none" }}>Done</button>
               </div>
             </div>
           ) : isCollect ? (
@@ -790,7 +793,7 @@ function MyBookings({ scheduleRecords, onNavigate }) {
 
       <form onSubmit={e => { e.preventDefault(); lookup(); }} style={{ display:"flex", gap:10, flexWrap:"wrap", marginBottom:24, maxWidth:460 }}>
         <div style={{ flex:1, minWidth:200 }}><Input type="tel" name="lookup-phone" autoComplete="off" value={phoneInput} onChange={e => setPhoneInput(e.target.value)} placeholder="01XXXXXXXXX" aria-label="Phone number" /></div>
-        <button type="submit" style={{ fontFamily:FH, fontSize:12, letterSpacing:1, textTransform:"uppercase", padding:"10px 20px", borderRadius:7, cursor:"pointer", background:C.cream, color:C.bgDeep, border:"none" }}>Show my bookings</button>
+        <button type="submit" style={{ fontFamily:FH, fontSize:12, letterSpacing:1, textTransform:"uppercase", padding:"10px 20px", borderRadius:7, cursor:"pointer", background:C.accent, color:"#FFFFFF", border:"none" }}>Show my bookings</button>
       </form>
 
       {phoneKey && mine.length === 0 && (
@@ -911,7 +914,7 @@ function LiveSlots({ scheduleRecords, onScheduleChange }) {
     <div>
       <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:24 }}>
         <div style={{ fontFamily:FH, fontSize:28, color:"#FFFFFF", letterSpacing:1, textTransform:"uppercase" }}>Live Slots</div>
-        <button onClick={() => { setNotice(""); setForm({ name:"", phone:"", slot:"06:00–07:30 — ৳2,200", payment:"bKash" }); setModal(true); }} style={{ fontFamily:FH, fontSize:13, letterSpacing:1.5, textTransform:"uppercase", padding:"10px 22px", borderRadius:8, cursor:"pointer", background:C.cream, color:C.bgDeep, border:"none" }}>+ New Booking</button>
+        <button onClick={() => { setNotice(""); setForm({ name:"", phone:"", slot:"06:00–07:30 — ৳2,200", payment:"bKash" }); setModal(true); }} style={{ fontFamily:FH, fontSize:13, letterSpacing:1.5, textTransform:"uppercase", padding:"10px 22px", borderRadius:8, cursor:"pointer", background:C.accent, color:"#FFFFFF", border:"none" }}>+ New Booking</button>
       </div>
 
       <div style={{ fontFamily:F, fontSize:12, color:C.muted, marginBottom:20, padding:"11px 16px", background:C.surface, borderLeft:`3px solid ${C.green}`, borderRadius:6 }}>Available slots this week · {filtered.length} open</div>
@@ -1020,7 +1023,7 @@ function Bookings({ bookings = [], onUpdateBooking }) {
                 {bk.closed ? "Deal Closed" : bk.due > 0 ? `Due ৳${bk.due.toLocaleString()}` : "Fully Paid"}
               </div>
             </div>
-            <button onClick={() => { setPaidAmount(bk.paid ?? bk.advance); setDealClosed(Boolean(bk.closed)); setPaymentModal(bk); }} style={{ fontFamily:FH, fontSize:11, letterSpacing:1, textTransform:"uppercase", padding:"8px 16px", borderRadius:7, cursor:"pointer", background:C.cream, color:C.bgDeep, border:"none", flexShrink:0 }}>
+            <button onClick={() => { setPaidAmount(bk.paid ?? bk.advance); setDealClosed(Boolean(bk.closed)); setPaymentModal(bk); }} style={{ fontFamily:FH, fontSize:11, letterSpacing:1, textTransform:"uppercase", padding:"8px 16px", borderRadius:7, cursor:"pointer", background:C.accent, color:"#FFFFFF", border:"none", flexShrink:0 }}>
               Edit Payment
             </button>
           </div>
@@ -1100,7 +1103,7 @@ function Earnings({ bookings = [] }) {
         </div>
 
         <div style={{ background:C.surface, borderRadius:14, padding:22 }}>
-          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16 }}><div style={{ fontFamily:FH, fontSize:18, color:"#FFFFFF", letterSpacing:1, textTransform:"uppercase" }}>Employee Salaries</div><button onClick={() => { setSalaryRows([...salaryRows, { id:nextSalaryId, employee:"Masum", amount:0 }]); setNextSalaryId(nextSalaryId + 1); }} style={{ fontFamily:FH, fontSize:11, letterSpacing:1, padding:"8px 12px", borderRadius:6, cursor:"pointer", background:C.cream, color:C.bgDeep, border:"none" }}>+ Add Payment</button></div>
+          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16 }}><div style={{ fontFamily:FH, fontSize:18, color:"#FFFFFF", letterSpacing:1, textTransform:"uppercase" }}>Employee Salaries</div><button onClick={() => { setSalaryRows([...salaryRows, { id:nextSalaryId, employee:"Masum", amount:0 }]); setNextSalaryId(nextSalaryId + 1); }} style={{ fontFamily:FH, fontSize:11, letterSpacing:1, padding:"8px 12px", borderRadius:6, cursor:"pointer", background:C.accent, color:"#FFFFFF", border:"none" }}>+ Add Payment</button></div>
           {salaryRows.map(row => <div key={row.id} className="salary-row" style={{ display:"grid", gridTemplateColumns:"1fr 120px 32px", gap:8, marginBottom:8 }}><Sel value={row.employee} onChange={e => setSalaryRows(salaryRows.map(item => item.id === row.id ? { ...item, employee:e.target.value } : item))}>{EMPLOYEES.map(employee => <option key={employee.id}>{employee.name}</option>)}</Sel><Input type="number" min="0" value={row.amount} onChange={e => setSalaryRows(salaryRows.map(item => item.id === row.id ? { ...item, amount:e.target.value } : item))} placeholder="Amount" /><button onClick={() => setSalaryRows(salaryRows.filter(item => item.id !== row.id))} title="Remove salary payment" style={{ background:"transparent", border:`1px solid ${C.borderMid}`, color:C.red, borderRadius:6, cursor:"pointer" }}>×</button></div>)}
           <div style={{ marginTop:16, paddingTop:16, borderTop:`1px solid ${C.border}`, display:"flex", justifyContent:"space-between", color:C.muted, fontSize:12 }}><span>Total salary cost</span><strong style={{ color:C.red }}>{money(salaries)}</strong></div>
           <div style={{ marginTop:10, display:"flex", justifyContent:"space-between", color:C.muted, fontSize:12 }}><span>Net earnings after salary</span><strong style={{ color:C.green }}>{money(net)}</strong></div>
@@ -1224,8 +1227,8 @@ export default function App() {
       .app-root input, .app-root textarea { cursor: text !important; }
       .app-root button:not(:disabled), .app-root select, .app-root label, .app-root input[type=checkbox], .app-root [style*="cursor: pointer"] { cursor: ${footballCursor(true)}, pointer !important; }
       .cal-day { transition: transform 0.15s ease, filter 0.15s ease; }
-      .cal-day.is-sel { filter: drop-shadow(0 0 12px rgba(237,216,200,0.4)); }
-      @media (hover: hover) { .cal-day:hover { transform: translateY(-2px); filter: drop-shadow(0 6px 12px rgba(255,70,70,0.4)); } }
+      .cal-day.is-sel { filter: drop-shadow(0 0 12px rgba(230,80,27,0.6)); }
+      @media (hover: hover) { .cal-day:hover { transform: translateY(-2px); filter: drop-shadow(0 6px 12px rgba(230,80,27,0.55)); } }
       .wd-short { display: none; }
       .lbl-short { display: none; }
       @media (max-width: 860px) { .wd-full { display: none; } .wd-short { display: inline; } }
@@ -1284,13 +1287,13 @@ export default function App() {
   }, [scheduleRecords, bookings]);
 
   return (
-    <div className="app-root" style={{ fontFamily:F, display:"flex", height:"100vh", background:`radial-gradient(1100px 520px at 12% -8%, rgba(255,90,90,0.18), transparent 62%), radial-gradient(900px 520px at 105% 108%, rgba(255,70,70,0.12), transparent 60%), linear-gradient(180deg, ${C.bg} 0%, #420C0C 100%)`, overflow:"hidden" }}>
+    <div className="app-root" style={{ fontFamily:F, display:"flex", height:"100vh", background:`radial-gradient(1100px 520px at 12% -8%, rgba(230,80,27,0.2), transparent 62%), radial-gradient(900px 520px at 105% 108%, rgba(195,17,12,0.25), transparent 60%), linear-gradient(180deg, ${C.bg} 0%, ${C.bgDeep} 100%)`, overflow:"hidden" }}>
 
       {/* Main */}
       <div className="app-main" style={{ flex:1, display:"flex", flexDirection:"column", overflow:"hidden", minWidth:0 }}>
         {/* Topbar */}
-        <div style={{ position:"relative", zIndex:3, height:48, background:"linear-gradient(180deg, rgba(36,5,5,0.96), rgba(50,8,8,0.92))", boxShadow:"0 8px 24px rgba(15,0,0,0.35)", display:"flex", alignItems:"center", padding:"0 26px", gap:16, flexShrink:0 }}>
-          <div aria-hidden="true" style={{ position:"absolute", left:0, right:0, bottom:0, height:1, background:"linear-gradient(90deg, transparent, rgba(255,95,95,0.75) 50%, transparent)", boxShadow:"0 0 12px rgba(255,80,80,0.55)" }} />
+        <div style={{ position:"relative", zIndex:3, height:48, background:"linear-gradient(180deg, rgba(40,9,5,0.97), rgba(54,10,5,0.94))", boxShadow:"0 8px 24px rgba(15,0,0,0.35)", display:"flex", alignItems:"center", padding:"0 26px", gap:16, flexShrink:0 }}>
+          <div aria-hidden="true" style={{ position:"absolute", left:0, right:0, bottom:0, height:1, background:"linear-gradient(90deg, transparent, rgba(230,80,27,0.9) 50%, transparent)", boxShadow:"0 0 12px rgba(230,80,27,0.6)" }} />
           <StrikeMark size={28} opacity={0.95} />
           <span style={{ fontFamily:FH, fontSize:"clamp(15px, 2vw, 20px)", color:"#FFFFFF", letterSpacing:1.5, textTransform:"uppercase", whiteSpace:"nowrap" }}>
             {currentPage === "dashboard" ? "Book your slot" : navItems.find(n => n.id === currentPage)?.label}
@@ -1312,11 +1315,11 @@ export default function App() {
         </div>
 
         {navItems.length > 1 && (
-          <div style={{ display:"flex", gap:6, padding:"6px 26px", background:"rgba(30,4,4,0.35)", borderBottom:`1px solid ${C.border}`, overflowX:"auto", flexShrink:0 }}>
+          <div style={{ display:"flex", gap:6, padding:"6px 26px", background:"rgba(40,9,5,0.45)", borderBottom:`1px solid ${C.border}`, overflowX:"auto", flexShrink:0 }}>
             {navItems.map(n => {
               const active = currentPage === n.id;
               return (
-                <button key={n.id} onClick={() => setPage(n.id)} style={{ fontFamily:FH, fontSize:12, letterSpacing:1, textTransform:"uppercase", padding:"5px 12px", borderRadius:7, cursor:"pointer", whiteSpace:"nowrap", background: active ? `linear-gradient(180deg, ${C.surfaceHigh}, #5E1414)` : "transparent", color: active ? "#FFFFFF" : C.faint, border:`1px solid ${active ? "rgba(255,150,150,0.3)" : "transparent"}`, boxShadow: active ? "0 4px 14px rgba(255,60,60,0.25)" : "none" }}>{n.label}</button>
+                <button key={n.id} onClick={() => setPage(n.id)} style={{ fontFamily:FH, fontSize:12, letterSpacing:1, textTransform:"uppercase", padding:"5px 12px", borderRadius:7, cursor:"pointer", whiteSpace:"nowrap", background: active ? `linear-gradient(180deg, ${C.accent}, ${C.surfaceHigh})` : "transparent", color: active ? "#FFFFFF" : C.faint, border:`1px solid ${active ? "rgba(230,80,27,0.6)" : "transparent"}`, boxShadow: active ? "0 4px 14px rgba(230,80,27,0.35)" : "none" }}>{n.label}</button>
               );
             })}
           </div>
