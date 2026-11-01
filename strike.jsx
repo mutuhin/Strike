@@ -505,7 +505,7 @@ function Dashboard({ scheduleRecords, onScheduleChange, isAdmin }) {
                     position:"relative", zIndex:0, padding:"clamp(7px, 1.3vh, 13px) 2px clamp(6px, 1vh, 10px)", textAlign:"center", cursor:"pointer",
                   }}>
                     <FieldShape
-                      fill={isSel ? `linear-gradient(180deg, #F26A33, ${C.orange})` : isToday ? "rgba(230,80,27,0.18)" : "linear-gradient(180deg, rgba(64,10,5,0.82), rgba(40,9,5,0.86))"}
+                      fill={isSel ? "linear-gradient(180deg, #FFFFFF, #F1E6E3)" : isToday ? "rgba(230,80,27,0.18)" : "linear-gradient(180deg, rgba(64,10,5,0.82), rgba(40,9,5,0.86))"}
                       line={isSel ? "rgba(40,9,5,0.6)" : isToday ? "rgba(255,140,90,0.95)" : "rgba(230,80,27,0.7)"}
                     />
                     {picked > 0 && <div style={{ position:"absolute", top:-6, right:-6, minWidth:20, height:20, padding:"0 5px", borderRadius:10, background:C.green, color:C.bgDeep, fontFamily:F, fontSize:11, fontWeight:700, display:"flex", alignItems:"center", justifyContent:"center", boxShadow:"0 2px 6px rgba(0,0,0,0.35)" }}>{picked}</div>}
@@ -1263,7 +1263,7 @@ export default function App() {
       .app-root input, .app-root textarea { cursor: text !important; }
       .app-root button:not(:disabled), .app-root select, .app-root label, .app-root input[type=checkbox], .app-root [style*="cursor: pointer"] { cursor: ${footballCursor(true)}, pointer !important; }
       .cal-day { transition: transform 0.15s ease, filter 0.15s ease; }
-      .cal-day.is-sel { filter: drop-shadow(0 0 12px rgba(230,80,27,0.6)); }
+      .cal-day.is-sel { filter: drop-shadow(0 0 12px rgba(255,255,255,0.5)); }
       @media (hover: hover) {
         .cal-day:hover { transform: translateY(-2px); filter: drop-shadow(0 0 10px rgba(255,255,255,0.45)); }
         .cal-day:hover .field-edge { border-color: rgba(255,255,255,0.95) !important; }
