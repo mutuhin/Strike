@@ -37,16 +37,16 @@ function Sel({ children, ...r }) { return <select {...r} style={{ ...inp, cursor
 function Field({ label, children }) {
   return (
     <div style={{ marginBottom: 16 }}>
-      <div style={{ fontFamily:F, fontSize:11, fontWeight:700, color:C.faint, letterSpacing:2, marginBottom:7, textTransform:"uppercase" }}>{label}</div>
+      <div style={{ fontFamily:F, fontSize:12, fontWeight:700, color:C.muted, letterSpacing:1.5, marginBottom:7, textTransform:"uppercase" }}>{label}</div>
       {children}
     </div>
   );
 }
 
-function Modal({ title, onClose, children }) {
+function Modal({ title, onClose, children, width = 460 }) {
   return (
     <div style={{ position:"fixed", inset:0, background:"rgba(20,0,0,0.75)", display:"flex", alignItems:"center", justifyContent:"center", zIndex:300 }}>
-      <div className="modal-panel" style={{ background:`linear-gradient(165deg, ${C.surface}, #3A0804)`, border:"1px solid rgba(230,80,27,0.3)", borderRadius:14, padding:28, width:460, maxWidth:"92vw", maxHeight:"92vh", overflowY:"auto", boxShadow:"0 24px 80px rgba(0,0,0,0.6)" }}>
+      <div className="modal-panel" style={{ background:`linear-gradient(165deg, ${C.surface}, #3A0804)`, border:"1px solid rgba(230,80,27,0.3)", borderRadius:14, padding:28, width, maxWidth:"92vw", maxHeight:"92vh", overflowY:"auto", boxShadow:"0 24px 80px rgba(0,0,0,0.6)" }}>
         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:22, paddingBottom:16, borderBottom:`1px solid ${C.border}` }}>
           <span style={{ fontFamily:FH, fontSize:18, color:C.cream, letterSpacing:1, textTransform:"uppercase" }}>{title}</span>
           <button onClick={onClose} style={{ background:C.surfaceHigh, border:`1px solid ${C.border}`, borderRadius:6, width:32, height:32, cursor:"pointer", color:C.muted, fontSize:14, display:"flex", alignItems:"center", justifyContent:"center" }}>✕</button>
@@ -60,8 +60,8 @@ function Modal({ title, onClose, children }) {
 function ModalFooter({ onCancel, onConfirm, confirmLabel }) {
   return (
     <div style={{ display:"flex", gap:10, justifyContent:"flex-end", marginTop:8, paddingTop:16, borderTop:`1px solid ${C.border}` }}>
-      <button type="button" onClick={onCancel} style={{ fontFamily:FH, fontSize:12, letterSpacing:1, textTransform:"uppercase", padding:"9px 20px", borderRadius:7, cursor:"pointer", background:"transparent", color:C.muted, border:`1px solid ${C.borderMid}` }}>Cancel</button>
-      <button type="button" onClick={onConfirm} style={{ fontFamily:FH, fontSize:12, letterSpacing:1, textTransform:"uppercase", padding:"9px 20px", borderRadius:7, cursor:"pointer", background:C.accent, color:"#FFFFFF", border:"none" }}>{confirmLabel}</button>
+      <button type="button" onClick={onCancel} style={{ fontFamily:FH, fontSize:14, letterSpacing:1, textTransform:"uppercase", padding:"11px 22px", borderRadius:8, cursor:"pointer", background:"transparent", color:C.muted, border:`1px solid ${C.borderMid}` }}>Cancel</button>
+      <button type="button" onClick={onConfirm} style={{ fontFamily:FH, fontSize:14, letterSpacing:1, textTransform:"uppercase", padding:"11px 22px", borderRadius:8, cursor:"pointer", background:C.accent, color:"#FFFFFF", border:"none" }}>{confirmLabel}</button>
     </div>
   );
 }
@@ -226,37 +226,53 @@ const escapeHtml = (text) => String(text).replace(/[&<>"']/g, ch => ({ "&":"&amp
 const formatIssued = (date) => date.toLocaleString("en-US", { day:"numeric", month:"short", year:"numeric", hour:"numeric", minute:"2-digit" });
 
 function Receipt({ receipt }) {
-  const row = { display:"flex", justifyContent:"space-between", gap:12, fontFamily:F, fontSize:12, color:C.muted, padding:"3px 0" };
+  const taka = n => `৳${n.toLocaleString()}`;
+  const label = { fontFamily:F, fontSize:11, fontWeight:700, color:C.faint, letterSpacing:1.2, textTransform:"uppercase" };
+  const value = { fontFamily:F, fontSize:15, fontWeight:700, color:"#FFFFFF", marginTop:3, overflowWrap:"anywhere" };
+  const sum = { display:"flex", justifyContent:"space-between", alignItems:"baseline", gap:12, fontFamily:F, fontSize:14, color:C.muted, padding:"4px 0" };
   return (
-    <div style={{ background:C.bgDeep, borderRadius:12, overflow:"hidden", border:`1px solid ${C.border}` }}>
-      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", gap:12, padding:"14px 18px", background:"#000" }}>
-        <img src={strikeLogo} alt="STRIKE" style={{ height:30, width:"auto", display:"block" }} />
+    <div style={{ background:C.bgDeep, borderRadius:12, overflow:"hidden", border:`1px solid ${C.borderMid}` }}>
+      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", gap:12, padding:"16px 18px", background:"#000" }}>
+        <img src={strikeLogo} alt="STRIKE" style={{ height:34, width:"auto", display:"block" }} />
         <div style={{ textAlign:"right" }}>
-          <div style={{ fontFamily:FH, fontSize:13, color:C.cream, letterSpacing:1.5, textTransform:"uppercase" }}>Booking Receipt</div>
-          <div style={{ fontFamily:F, fontSize:11, color:C.faint, marginTop:2 }}>{receipt.id}</div>
+          <div style={{ fontFamily:FH, fontSize:15, color:"#FFFFFF", letterSpacing:1.5, textTransform:"uppercase" }}>Booking Receipt</div>
+          <div style={{ fontFamily:F, fontSize:14, fontWeight:700, color:C.orange, marginTop:3, letterSpacing:1 }}>{receipt.id}</div>
         </div>
       </div>
-      <div style={{ padding:"14px 18px" }}>
-        <div style={{ display:"flex", alignItems:"center", gap:8, color:C.green, fontFamily:F, fontSize:12, fontWeight:700, marginBottom:12 }}>✓ Payment received · Booking confirmed</div>
-        <div style={row}><span>Name</span><strong style={{ color:"#FFFFFF" }}>{receipt.name}</strong></div>
-        <div style={row}><span>Phone</span><strong style={{ color:"#FFFFFF" }}>{receipt.phone}</strong></div>
-        <div style={row}><span>Payment method</span><strong style={{ color:"#FFFFFF" }}>{receipt.payment}</strong></div>
-        <div style={row}><span>Issued</span><strong style={{ color:"#FFFFFF" }}>{formatIssued(receipt.issued)}</strong></div>
-        <div style={{ margin:"12px 0", borderTop:`1px dashed ${C.borderMid}` }} />
-        {receipt.items.map((item, i) => (
-          <div key={i} style={{ display:"flex", justifyContent:"space-between", gap:12, padding:"6px 0" }}>
-            <div>
-              <div style={{ fontFamily:FH, fontSize:13, color:"#FFFFFF", letterSpacing:0.3 }}>{item.date}</div>
-              <div style={{ fontFamily:F, fontSize:11, color:C.faint, marginTop:2 }}>{item.time} · {item.period}</div>
-            </div>
-            <div style={{ fontFamily:FH, fontSize:13, color:C.cream }}>৳{item.price.toLocaleString()}</div>
+      <div style={{ padding:"16px 18px", display:"grid", gap:16 }}>
+        <div style={{ background:"rgba(91,232,154,0.12)", border:`1px solid ${C.green}`, borderRadius:8, padding:"10px 12px", color:C.green, fontFamily:F, fontSize:15, fontWeight:700 }}>✓ Booking confirmed</div>
+
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(2, minmax(0, 1fr))", gap:"12px 16px" }}>
+          {[["Name", receipt.name], ["Phone", receipt.phone], ["Payment method", receipt.payment], ["Issued", formatIssued(receipt.issued)]].map(([k, v]) => (
+            <div key={k} style={{ minWidth:0 }}><div style={label}>{k}</div><div style={value}>{v}</div></div>
+          ))}
+        </div>
+
+        <div>
+          <div style={{ ...label, marginBottom:6 }}>Your slots · {receipt.items.length}</div>
+          <div style={{ borderTop:`1px dashed ${C.borderMid}`, borderBottom:`1px dashed ${C.borderMid}` }}>
+            {receipt.items.map((item, i) => (
+              <div key={i} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", gap:12, padding:"10px 0", borderTop: i ? `1px solid ${C.border}` : "none" }}>
+                <div style={{ minWidth:0 }}>
+                  <div style={{ fontFamily:FH, fontSize:17, color:"#FFFFFF", letterSpacing:0.3 }}>{item.date}</div>
+                  <div style={{ fontFamily:F, fontSize:14, fontWeight:700, color:C.muted, marginTop:3 }}>{item.time} <span style={{ color:C.faint, fontWeight:400 }}>· {item.period}</span></div>
+                </div>
+                <div style={{ fontFamily:FH, fontSize:18, color:"#FFFFFF", flexShrink:0 }}>{taka(item.price)}</div>
+              </div>
+            ))}
           </div>
-        ))}
-        <div style={{ margin:"12px 0", borderTop:`1px dashed ${C.borderMid}` }} />
-        <div style={row}><span>Total ({receipt.items.length} slot{receipt.items.length === 1 ? "" : "s"})</span><strong style={{ color:"#FFFFFF" }}>৳{receipt.total.toLocaleString()}</strong></div>
-        <div style={row}><span>Advance paid</span><strong style={{ color:C.green }}>৳{receipt.advance.toLocaleString()}</strong></div>
-        <div style={{ ...row, color:C.gold }}><span>Due at the ground</span><strong>৳{receipt.due.toLocaleString()}</strong></div>
-        <div style={{ fontFamily:F, fontSize:11, color:C.faint, marginTop:12, lineHeight:1.5 }}>Show this receipt at the ground. Keep your receipt number for any questions.</div>
+        </div>
+
+        <div>
+          <div style={sum}><span>Total ({receipt.items.length} slot{receipt.items.length === 1 ? "" : "s"})</span><strong style={{ fontSize:17, color:"#FFFFFF" }}>{taka(receipt.total)}</strong></div>
+          <div style={sum}><span>Advance paid ({receipt.payment})</span><strong style={{ fontSize:17, color:C.green }}>{taka(receipt.advance)}</strong></div>
+          <div style={{ marginTop:10, display:"flex", justifyContent:"space-between", alignItems:"center", gap:12, background:"rgba(255,221,170,0.1)", border:`1px solid ${C.gold}`, borderRadius:8, padding:"12px 14px" }}>
+            <span style={{ fontFamily:F, fontSize:14, fontWeight:700, color:C.gold, textTransform:"uppercase", letterSpacing:1 }}>Pay at the ground</span>
+            <strong style={{ fontFamily:FH, fontSize:26, color:C.gold }}>{taka(receipt.due)}</strong>
+          </div>
+        </div>
+
+        <div style={{ fontFamily:F, fontSize:13, color:C.muted, lineHeight:1.5 }}>Show this receipt at the ground. Keep your receipt number <strong style={{ color:"#FFFFFF" }}>{receipt.id}</strong> for any questions.</div>
       </div>
     </div>
   );
@@ -273,32 +289,45 @@ function printReceipt(receipt) {
   const taka = (n) => `৳${n.toLocaleString()}`;
   win.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>STRIKE Receipt ${escapeHtml(receipt.id)}</title>
     <style>
-      body { font-family: Arial, sans-serif; color: #2A0A0A; margin: 0; padding: 24px; background: #fff; }
-      .card { max-width: 420px; margin: 0 auto; border: 1px solid #E5D3CC; border-radius: 12px; overflow: hidden; }
-      .head { background: #000; color: #EDD8C8; display: flex; justify-content: space-between; align-items: center; padding: 14px 18px; }
-      .head img { height: 30px; display: block; }
-      .head .t { text-align: right; font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 700; }
-      .head .id { font-size: 11px; color: #C4A0A0; letter-spacing: 0; margin-top: 2px; }
-      .body { padding: 16px 18px; }
-      .ok { color: #1B8A4C; font-weight: 700; font-size: 13px; margin-bottom: 12px; }
-      .row { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; padding: 3px 0; color: #6B4A4A; }
-      .row strong { color: #2A0A0A; }
-      .due, .due strong { color: #A15C00; }
-      hr { border: 0; border-top: 1px dashed #D9C2B8; margin: 12px 0; }
-      .slot { display: flex; justify-content: space-between; padding: 6px 0; font-size: 13px; }
-      .slot small { display: block; color: #8A6A6A; margin-top: 2px; }
-      .note { font-size: 11px; color: #8A6A6A; margin-top: 12px; line-height: 1.5; }
+      body { font-family: Arial, sans-serif; color: #280905; margin: 0; padding: 24px; background: #fff; }
+      .card { max-width: 460px; margin: 0 auto; border: 1px solid #E2CBC2; border-radius: 12px; overflow: hidden; }
+      .head { background: #000; color: #fff; display: flex; justify-content: space-between; align-items: center; padding: 16px 18px; }
+      .head img { height: 34px; display: block; }
+      .head .t { text-align: right; font-size: 14px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 700; }
+      .head .id { font-size: 15px; color: #E6501B; letter-spacing: 1px; margin-top: 3px; }
+      .body { padding: 18px; display: grid; gap: 16px; }
+      .ok { color: #11733D; background: #E8F7EE; border: 1px solid #9ED9B6; border-radius: 8px; padding: 10px 12px; font-weight: 700; font-size: 15px; }
+      .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 16px; }
+      .k { font-size: 11px; font-weight: 700; color: #7A5A55; letter-spacing: 1.2px; text-transform: uppercase; }
+      .v { font-size: 15px; font-weight: 700; margin-top: 3px; overflow-wrap: anywhere; }
+      .slots { border-top: 1px dashed #D9C2B8; border-bottom: 1px dashed #D9C2B8; }
+      .slot { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 0; }
+      .slot + .slot { border-top: 1px solid #EFE2DC; }
+      .slot .d { font-size: 16px; font-weight: 700; }
+      .slot .tm { font-size: 14px; font-weight: 700; color: #5A3A35; margin-top: 3px; }
+      .slot .tm span { font-weight: 400; color: #7A5A55; }
+      .slot .p { font-size: 17px; font-weight: 700; }
+      .row { display: flex; justify-content: space-between; gap: 12px; font-size: 14px; padding: 4px 0; color: #5A3A35; }
+      .row strong { color: #280905; font-size: 16px; }
+      .row.paid strong { color: #11733D; }
+      .due { margin-top: 10px; display: flex; justify-content: space-between; align-items: center; background: #FFF4E0; border: 1px solid #E8B25E; border-radius: 8px; padding: 12px 14px; }
+      .due span { font-size: 14px; font-weight: 700; color: #8A4B00; text-transform: uppercase; letter-spacing: 1px; }
+      .due strong { font-size: 24px; color: #8A4B00; }
+      .note { font-size: 13px; color: #5A3A35; line-height: 1.5; }
       @media print { body { padding: 0; } .card { border: none; } }
     </style></head><body><div class="card">
       <div class="head"><img src="${logo}" alt="STRIKE"><div class="t">Booking Receipt<div class="id">${escapeHtml(receipt.id)}</div></div></div>
       <div class="body">
-        <div class="ok">✓ Payment received · Booking confirmed</div>
-        ${line("Name", receipt.name)}${line("Phone", receipt.phone)}${line("Payment method", receipt.payment)}${line("Issued", formatIssued(receipt.issued))}
-        <hr>
-        ${receipt.items.map(item => `<div class="slot"><div><strong>${escapeHtml(item.date)}</strong><small>${escapeHtml(item.time)} · ${escapeHtml(item.period)}</small></div><strong>${taka(item.price)}</strong></div>`).join("")}
-        <hr>
-        ${line(`Total (${receipt.items.length} slot${receipt.items.length === 1 ? "" : "s"})`, taka(receipt.total))}${line("Advance paid", taka(receipt.advance))}${line("Due at the ground", taka(receipt.due), "due")}
-        <div class="note">Show this receipt at the ground. Keep your receipt number for any questions.</div>
+        <div class="ok">✓ Booking confirmed</div>
+        <div class="grid">${[["Name", receipt.name], ["Phone", receipt.phone], ["Payment method", receipt.payment], ["Issued", formatIssued(receipt.issued)]].map(([k, v]) => `<div><div class="k">${escapeHtml(k)}</div><div class="v">${escapeHtml(v)}</div></div>`).join("")}</div>
+        <div><div class="k" style="margin-bottom:6px">Your slots · ${receipt.items.length}</div><div class="slots">
+          ${receipt.items.map(item => `<div class="slot"><div><div class="d">${escapeHtml(item.date)}</div><div class="tm">${escapeHtml(item.time)} <span>· ${escapeHtml(item.period)}</span></div></div><div class="p">${taka(item.price)}</div></div>`).join("")}
+        </div></div>
+        <div>
+          ${line(`Total (${receipt.items.length} slot${receipt.items.length === 1 ? "" : "s"})`, taka(receipt.total))}${line(`Advance paid (${receipt.payment})`, taka(receipt.advance), "paid")}
+          <div class="due"><span>Pay at the ground</span><strong>${taka(receipt.due)}</strong></div>
+        </div>
+        <div class="note">Show this receipt at the ground. Keep your receipt number <strong>${escapeHtml(receipt.id)}</strong> for any questions.</div>
       </div></div>
       <script>window.onload = () => { window.focus(); window.print(); };<\/script>
     </body></html>`);
@@ -636,42 +665,49 @@ function Dashboard({ scheduleRecords, onScheduleChange, isAdmin }) {
       )}
 
       {isCheckout && (
-        <Modal title={receipt ? "Booking Confirmed" : "Confirm Booking"} onClose={() => { setReceipt(null); setBookModal(null); }}>
+        <Modal width={540} title={receipt ? "Booking Confirmed" : "Confirm Booking"} onClose={() => { setReceipt(null); setBookModal(null); }}>
           {receipt ? (
             <div>
               <Receipt receipt={receipt} />
               {printBlocked && <div style={{ marginTop:12, background:"rgba(255,221,170,0.08)", border:`1px solid ${C.gold}`, borderRadius:7, padding:"10px 12px", color:C.gold, fontSize:12, lineHeight:1.5 }}>Printing isn't available on this page. Take a screenshot of the receipt to keep it.</div>}
               <div style={{ display:"flex", justifyContent:"flex-end", gap:10, flexWrap:"wrap", marginTop:16, paddingTop:16, borderTop:`1px solid ${C.border}` }}>
-                <button type="button" onClick={() => { setReceipt(null); setBookModal(null); }} style={{ fontFamily:FH, fontSize:12, letterSpacing:1, textTransform:"uppercase", padding:"9px 20px", borderRadius:7, cursor:"pointer", background:"transparent", color:C.muted, border:`1px solid ${C.borderMid}` }}>Done</button>
-                <button type="button" onClick={() => setPrintBlocked(!printReceipt(receipt))} style={{ fontFamily:FH, fontSize:12, letterSpacing:1, textTransform:"uppercase", padding:"9px 20px", borderRadius:7, cursor:"pointer", background:C.accent, color:"#FFFFFF", border:"none" }}>Print / Save PDF</button>
+                <button type="button" onClick={() => { setReceipt(null); setBookModal(null); }} style={{ fontFamily:FH, fontSize:14, letterSpacing:1, textTransform:"uppercase", padding:"11px 22px", borderRadius:8, cursor:"pointer", background:"transparent", color:C.muted, border:`1px solid ${C.borderMid}` }}>Done</button>
+                <button type="button" onClick={() => setPrintBlocked(!printReceipt(receipt))} style={{ fontFamily:FH, fontSize:14, letterSpacing:1, textTransform:"uppercase", padding:"11px 22px", borderRadius:8, cursor:"pointer", background:C.accent, color:"#FFFFFF", border:"none" }}>Print / Save PDF</button>
               </div>
             </div>
           ) : (
             <div>
-              <div style={{ background:C.bgDeep, borderRadius:10, padding:"6px 16px", marginBottom:14 }}>
-                {cartItems.length === 0 && <div style={{ color:C.muted, fontSize:13, padding:"12px 0" }}>No slots selected.</div>}
-                {cartItems.map(c => (
-                  <div key={`${c.day}-${c.slotId}`} style={{ display:"flex", alignItems:"center", gap:12, padding:"10px 0", borderBottom:`1px solid ${C.border}` }}>
+              <div style={{ fontFamily:F, fontSize:12, fontWeight:700, color:C.muted, letterSpacing:1.5, textTransform:"uppercase", marginBottom:8 }}>Your slots · {cartItems.length}</div>
+              <div style={{ background:C.bgDeep, border:`1px solid ${C.border}`, borderRadius:10, padding:"2px 16px", marginBottom:16 }}>
+                {cartItems.length === 0 && <div style={{ color:C.muted, fontSize:14, padding:"14px 0" }}>No slots selected.</div>}
+                {cartItems.map((c, i) => (
+                  <div key={`${c.day}-${c.slotId}`} style={{ display:"flex", alignItems:"center", gap:12, padding:"12px 0", borderTop: i ? `1px solid ${C.border}` : "none" }}>
                     <div style={{ flex:1, minWidth:0 }}>
-                      <div style={{ fontFamily:FH, fontSize:14, color:"#FFFFFF", letterSpacing:0.3 }}>{fullDateLabel(c.day)}</div>
-                      <div style={{ fontFamily:F, fontSize:11, color:C.faint, marginTop:2 }}>{c.slot.label} · {c.slot.period}</div>
+                      <div style={{ fontFamily:FH, fontSize:17, color:"#FFFFFF", letterSpacing:0.3 }}>{fullDateLabel(c.day)}</div>
+                      <div style={{ fontFamily:F, fontSize:14, fontWeight:700, color:C.muted, marginTop:3 }}>{c.slot.label} <span style={{ color:C.faint, fontWeight:400 }}>· {c.slot.period}</span></div>
                     </div>
-                    <div style={{ fontFamily:FH, fontSize:14, color:C.cream }}>৳{c.slot.price.toLocaleString()}</div>
-                    <button type="button" title="Remove slot" onClick={() => toggleCart(c.day, c.slotId)} style={{ background:"transparent", border:`1px solid ${C.borderMid}`, color:C.red, borderRadius:6, width:28, height:28, cursor:"pointer", flexShrink:0 }}>×</button>
+                    <div style={{ fontFamily:FH, fontSize:18, color:"#FFFFFF" }}>৳{c.slot.price.toLocaleString()}</div>
+                    <button type="button" title="Remove slot" aria-label={`Remove ${fullDateLabel(c.day)} ${c.slot.label}`} onClick={() => toggleCart(c.day, c.slotId)} style={{ background:"transparent", border:`1px solid ${C.borderMid}`, color:C.red, borderRadius:6, width:32, height:32, fontSize:16, cursor:"pointer", flexShrink:0 }}>×</button>
                   </div>
                 ))}
               </div>
-              <div style={{ display:"grid", gap:6, fontFamily:F, fontSize:12, color:C.muted, marginBottom:18 }}>
-                <div style={{ display:"flex", justifyContent:"space-between" }}><span>Total ({cartItems.length} slot{cartItems.length === 1 ? "" : "s"})</span><strong style={{ color:"#FFFFFF" }}>৳{cartTotal.toLocaleString()}</strong></div>
-                <div style={{ display:"flex", justifyContent:"space-between" }}><span>Advance now (৳500 per slot)</span><strong style={{ color:C.cream }}>৳{cartAdvance.toLocaleString()}</strong></div>
-                <div style={{ display:"flex", justifyContent:"space-between", color:C.gold }}><span>Remaining at the ground</span><strong>৳{(cartTotal - cartAdvance).toLocaleString()}</strong></div>
+              <div style={{ display:"grid", gap:8, marginBottom:20 }}>
+                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"baseline", fontFamily:F, fontSize:15, color:C.muted }}><span>Total ({cartItems.length} slot{cartItems.length === 1 ? "" : "s"})</span><strong style={{ fontSize:18, color:"#FFFFFF" }}>৳{cartTotal.toLocaleString()}</strong></div>
+                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", gap:12, background:"rgba(195,17,12,0.22)", border:`1px solid ${C.orange}`, borderRadius:10, padding:"12px 14px" }}>
+                  <div>
+                    <div style={{ fontFamily:F, fontSize:14, fontWeight:700, color:"#FFFFFF", textTransform:"uppercase", letterSpacing:1 }}>Pay now (advance)</div>
+                    <div style={{ fontFamily:F, fontSize:12, color:C.muted, marginTop:2 }}>৳500 × {cartItems.length} slot{cartItems.length === 1 ? "" : "s"}</div>
+                  </div>
+                  <strong style={{ fontFamily:FH, fontSize:28, color:"#FFFFFF" }}>৳{cartAdvance.toLocaleString()}</strong>
+                </div>
+                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"baseline", fontFamily:F, fontSize:15, color:C.gold }}><span style={{ fontWeight:700 }}>Pay at the ground</span><strong style={{ fontFamily:FH, fontSize:20 }}>৳{(cartTotal - cartAdvance).toLocaleString()}</strong></div>
               </div>
               <Field label="Your Name"><Input value={bookingForm.name} onChange={e => setBookingForm({ ...bookingForm, name:e.target.value })} placeholder="Full name" /></Field>
               <Field label="Phone Number"><Input type="tel" value={bookingForm.phone} onChange={e => setBookingForm({ ...bookingForm, phone:e.target.value })} placeholder="01XXXXXXXXX" /></Field>
               <Field label="Payment Method">
                 <Sel value={bookingForm.payment} onChange={e => setBookingForm({ ...bookingForm, payment:e.target.value })}><option>bKash</option><option>Bank</option></Sel>
               </Field>
-              {bookingError && <div style={{ color:C.red, fontSize:11, marginBottom:12 }}>{bookingError}</div>}
+              {bookingError && <div style={{ color:C.red, fontSize:14, fontWeight:700, marginBottom:12 }}>{bookingError}</div>}
               <ModalFooter onCancel={() => setBookModal(null)} onConfirm={confirmCheckout} confirmLabel={`Confirm ${cartItems.length} Booking${cartItems.length === 1 ? "" : "s"}`} />
             </div>
           )}
@@ -698,7 +734,7 @@ function Dashboard({ scheduleRecords, onScheduleChange, isAdmin }) {
             <div>
               <div style={{ background:"rgba(91,232,154,0.1)", border:`1px solid ${C.green}`, borderRadius:7, padding:"12px 14px", color:C.green, fontSize:12, lineHeight:1.5 }}>{bookingNotice}</div>
               <div style={{ display:"flex", justifyContent:"flex-end", marginTop:16, paddingTop:16, borderTop:`1px solid ${C.border}` }}>
-                <button onClick={() => setBookModal(null)} style={{ fontFamily:FH, fontSize:12, letterSpacing:1, textTransform:"uppercase", padding:"9px 20px", borderRadius:7, cursor:"pointer", background:C.accent, color:"#FFFFFF", border:"none" }}>Done</button>
+                <button onClick={() => setBookModal(null)} style={{ fontFamily:FH, fontSize:14, letterSpacing:1, textTransform:"uppercase", padding:"11px 22px", borderRadius:8, cursor:"pointer", background:C.accent, color:"#FFFFFF", border:"none" }}>Done</button>
               </div>
             </div>
           ) : isCollect ? (
